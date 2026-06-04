@@ -45,6 +45,8 @@ Project-build-SKILL/
 │  ├─ roles/                          <- 6 个角色定义
 │  ├─ schema/                         <- JSON Schema（状态文件格式）
 │  └─ templates/                      <- 交付文档模板
+│     ├─ packaging-guide.md           <- 项目打包指南模板
+│     ├─ project-summary.md           <- 项目总结介绍模板
 │     └─ defense-report.md            <- 答辩准备报告模板
 │
 ├─ skills/                            <- 7 个精简版 Skill（角色执行时读取）

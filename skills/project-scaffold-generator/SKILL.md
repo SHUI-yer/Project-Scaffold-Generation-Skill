@@ -46,7 +46,7 @@ description: "通用项目脚手架生成器：从需求文档或结构化问答
 
 ### Phase 1：需求获取
 
-- 扫描当前目录的需求文档（`.md/.txt/.docx`）
+- 扫描当前目录的需求文档（`.md/.txt` 直接读取；`.docx` 需用户粘贴关键内容或导出为 .md 后读取）
 - 若无文档：进入结构化问答（每轮最多 4 题，选项式为主）
 
 ### Phase 2：需求分析
@@ -82,10 +82,10 @@ description: "通用项目脚手架生成器：从需求文档或结构化问答
 
 ### Phase 7：交付物
 
-输出 docs/ 下的交付文档（Markdown）：
-- 打包指南
-- 项目总结介绍
-- 答辩准备报告（面向小白评审）
+输出 docs/ 下的交付文档（基于模板生成，Markdown）：
+- 打包指南（模板：`workflow/templates/packaging-guide.md`）
+- 项目总结介绍（模板：`workflow/templates/project-summary.md`）
+- 答辩准备报告（模板：`workflow/templates/defense-report.md`）
 
 ## 可选加载（追问题库）
 

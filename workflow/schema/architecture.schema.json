@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "architecture.json",
+  "description": "Architect 输出：技术架构决策表",
+  "type": "object",
+  "required": ["project_name", "tech_stack", "layers", "directory_structure"],
+  "properties": {
+    "project_name": { "type": "string" },
+    "tech_stack": {
+      "type": "object",
+      "required": ["backend", "database", "orm"],
+      "properties": {
+        "backend": { "type": "string", "description": "后端框架（如 Spring Boot / FastAPI / NestJS）" },
+        "database": { "type": "string" },
+        "orm": { "type": "string", "description": "ORM（如 MyBatis / Prisma / SQLAlchemy）" },
+        "frontend": { "type": ["string", "null"], "description": "前端框架" },
+        "auth": { "type": "string", "description": "认证方案（如 JWT / Session / OAuth2）" },
+        "package_manager": { "type": "string" },
+        "build_tool": { "type": "string" }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "description": "分层架构定义",
+      "properties": {
+        "backend": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "后端分层（如 [controller, service, repository, entity]）"
+        },
+        "frontend": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "前端分层（如 [api, components, pages, types]）"
+        }
+      }
+    },
+    "directory_structure": {
+      "type": "object",
+      "description": "目录结构定义",
+      "properties": {
+        "apps": { "type": "object", "description": "应用目录" },
+        "services": { "type": "object", "description": "服务目录" },
+        "db": { "type": "string", "description": "数据库目录" },
+        "deploy": { "type": "string", "description": "部署配置目录" },
+        "docs": { "type": "string", "description": "文档目录" },
+        "scripts": { "type": "string", "description": "脚本目录" }
+      }
+    },
+    "api_contract": {
+      "type": "array",
+      "description": "接口契约清单",
+      "items": {
+        "type": "object",
+        "properties": {
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"] },
+          "path": { "type": "string" },
+          "description": { "type": "string" },
+          "request_body": { "type": ["object", "null"] },
+          "response_body": { "type": ["object", "null"] },
+          "auth_required": { "type": "boolean" }
+        }
+      }
+    },
+    "security_config": {
+      "type": "object",
+      "properties": {
+        "level": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "env_variables": {
+      "type": "array",
+      "description": "环境变量清单",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "required": { "type": "boolean" },
+          "example": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "fix-report.json",
+  "description": "FixRouter/Specialist 输出：修正报告",
+  "type": "object",
+  "required": ["project_name", "fixes"],
+  "properties": {
+    "project_name": { "type": "string" },
+    "fixes": {
+      "type": "array",
+      "description": "修正记录列表",
+      "items": {
+        "type": "object",
+        "required": ["fix_id", "category", "description", "files_changed", "status"],
+        "properties": {
+          "fix_id": { "type": "string", "description": "修正编号（如 FIX-001）" },
+          "category": {
+            "type": "string",
+            "enum": ["frontend", "backend", "database", "ui_style", "engineering"],
+            "description": "修正类别"
+          },
+          "description": { "type": "string", "description": "修正内容说明" },
+          "files_changed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "action": { "type": "string", "enum": ["created", "modified", "deleted"] }
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["fixed", "partial", "skipped", "deferred"],
+            "description": "修正状态"
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "验收点"
+          },
+          "rollback_info": { "type": "string", "description": "回滚说明（可选）" }
+        }
+      }
+    },
+    "remaining_issues": {
+      "type": "array",
+      "description": "未修复/延后的问题",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "reason": { "type": "string" },
+          "deferred_to": { "type": "string" }
+        }
+      }
+    },
+    "summary": { "type": "string", "description": "修正摘要" }
+  }
+}

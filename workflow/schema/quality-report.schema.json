@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "quality-report.json",
+  "description": "QA 输出：质量检查报告",
+  "type": "object",
+  "required": ["project_name", "overall_status", "checks"],
+  "properties": {
+    "project_name": { "type": "string" },
+    "overall_status": {
+      "type": "string",
+      "enum": ["pass", "fail", "partial"],
+      "description": "总体质量状态"
+    },
+    "checks": {
+      "type": "array",
+      "description": "检查项列表",
+      "items": {
+        "type": "object",
+        "required": ["category", "item", "status", "location"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["functionality", "security", "ui_consistency", "type_safety", "naming", "engineering", "documentation"],
+            "description": "检查类别"
+          },
+          "item": { "type": "string", "description": "检查项名称" },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "partial", "skipped"],
+            "description": "检查结果"
+          },
+          "location": { "type": "string", "description": "涉及的文件/模块位置" },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "major", "minor"],
+            "description": "严重程度"
+          },
+          "suggestion": { "type": "string", "description": "修复建议" }
+        }
+      }
+    },
+    "requirements_traceability": {
+      "type": "array",
+      "description": "需求追踪表",
+      "items": {
+        "type": "object",
+        "properties": {
+          "requirement": { "type": "string" },
+          "implemented": { "type": "boolean" },
+          "location": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "issues_for_fix": {
+      "type": "array",
+      "description": "需要修复的问题清单（传给 FixRouter）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["frontend", "backend", "database", "ui_style", "engineering"] },
+          "description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "major", "minor"] }
+        }
+      }
+    }
+  }
+}

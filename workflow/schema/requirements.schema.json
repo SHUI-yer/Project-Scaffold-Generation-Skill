@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "requirements.json",
+  "description": "Planner 输出：结构化需求表",
+  "type": "object",
+  "required": ["project_name", "project_type", "language", "modules", "output_dir"],
+  "properties": {
+    "project_name": { "type": "string", "description": "项目名称" },
+    "project_type": {
+      "type": "string",
+      "enum": ["fullstack", "backend-only", "frontend-only", "cli", "library"],
+      "description": "项目类型"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["java", "python", "typescript", "go", "rust"],
+      "description": "后端语言"
+    },
+    "frontend_framework": {
+      "type": ["string", "null"],
+      "enum": ["vue3", "react", "svelte", null],
+      "description": "前端框架（无前端时为 null）"
+    },
+    "database": {
+      "type": "string",
+      "enum": ["postgresql", "mysql", "mongodb", "sqlite", "h2"],
+      "description": "数据库"
+    },
+    "security_level": {
+      "type": "string",
+      "enum": ["personal", "opensource", "business", "enterprise"],
+      "description": "安全等级"
+    },
+    "ui_style": {
+      "type": "object",
+      "properties": {
+        "design_system": { "type": "string", "description": "设计规范" },
+        "theme": { "type": "string", "enum": ["light", "dark", "both"] },
+        "color_scheme": { "type": "string", "description": "配色方案" },
+        "animation": { "type": "string", "enum": ["none", "light", "rich"] },
+        "font": { "type": "string", "description": "字体方案" },
+        "layout": { "type": "string", "enum": ["sidebar", "topbar", "mixed", "single"] }
+      },
+      "description": "UI 风格配置"
+    },
+    "build_order": {
+      "type": "string",
+      "enum": ["data-first", "backend-first", "contract-driven", "minimal-run"],
+      "description": "构建顺序"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "functions"],
+        "properties": {
+          "name": { "type": "string", "description": "模块名称" },
+          "functions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "功能点列表"
+          },
+          "crud": { "type": "boolean", "description": "是否需要 CRUD" },
+          "priority": { "type": "string", "enum": ["core", "extended"] }
+        }
+      },
+      "description": "功能模块列表"
+    },
+    "user_roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "permissions": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "description": "用户角色与权限"
+    },
+    "data_model": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity": { "type": "string" },
+          "fields": { "type": "array", "items": { "type": "string" } },
+          "relations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "description": "数据模型"
+    },
+    "output_dir": { "type": "string", "description": "输出目录（如 workspace/my-app）" },
+    "output_language": { "type": "string", "enum": ["zh", "en", "bilingual"], "description": "输出语言" }
+  }
+}

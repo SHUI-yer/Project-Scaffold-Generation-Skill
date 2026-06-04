@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "defense-report.md",
+  "description": "Stage 6 收尾产出：项目答辩准备报告模板",
+  "type": "object",
+  "required": ["project_name", "sections"],
+  "properties": {
+    "project_name": { "type": "string", "description": "项目名称" },
+    "generated_at": { "type": "string", "description": "生成时间（ISO 8601）" },
+    "sections": {
+      "type": "array",
+      "description": "报告章节列表",
+      "items": {
+        "type": "object",
+        "required": ["title", "level", "content_type"],
+        "properties": {
+          "title": { "type": "string", "description": "章节标题" },
+          "level": { "type": "integer", "enum": [1, 2, 3], "description": "标题层级" },
+          "content_type": { "type": "string", "enum": ["text", "table", "code", "diagram", "list"], "description": "内容类型" },
+          "description": { "type": "string", "description": "本章节应包含的内容说明" }
+        }
+      }
+    }
+  }
+}

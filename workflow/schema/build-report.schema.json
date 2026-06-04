@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "build-report.json",
+  "description": "Builder 输出：每阶段构建报告",
+  "type": "object",
+  "required": ["project_name", "stages"],
+  "properties": {
+    "project_name": { "type": "string" },
+    "stages": {
+      "type": "array",
+      "description": "已构建阶段列表（按顺序）",
+      "items": {
+        "type": "object",
+        "required": ["stage_id", "stage_name", "status", "files", "startup_command", "acceptance_criteria"],
+        "properties": {
+          "stage_id": { "type": "string", "description": "阶段编号（如 layer-1-skeleton）" },
+          "stage_name": { "type": "string", "description": "阶段名称" },
+          "status": {
+            "type": "string",
+            "enum": ["completed", "skipped", "partial"],
+            "description": "构建状态"
+          },
+          "files": {
+            "type": "array",
+            "description": "本阶段新增/修改的文件清单",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "action": { "type": "string", "enum": ["created", "modified"] },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "startup_command": { "type": "string", "description": "本阶段的启动/运行命令" },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "验收点列表"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "本阶段依赖的其他阶段 ID"
+          }
+        }
+      }
+    },
+    "total_files": { "type": "integer", "description": "总文件数" },
+    "directory_structure_snapshot": { "type": "string", "description": "Layer 1 结束后的目录树快照（tree 格式）" },
+    "summary": { "type": "string", "description": "构建摘要" }
+  }
+}

@@ -40,6 +40,8 @@ Project-build-SKILL/
 ├─ AGENTS.md                          <- Codex / 通用 Agent 指令入口
 ├─ README.md                          <- 本文件
 ├─ input/                             <- 需求文档输入目录（放 .md/.txt/.docx）
+├─ scripts/
+│  └─ docx2md.py                      <- .docx 转 Markdown 工具（依赖 python-docx）
 │
 ├─ workflow/                          <- 工作流定义（所有平台共用）
 │  ├─ orchestrator.md                 <- 调度器 + 企业级目录规范

@@ -46,8 +46,11 @@ description: "通用项目脚手架生成器：从需求文档或结构化问答
 
 ### Phase 1：需求获取
 
-- 扫描 `input/` 目录下的需求文档（`.md/.txt` 直接读取；`.docx` 需用户粘贴关键内容或导出为 .md 后读取）
-- 若无文档：进入结构化问答（每轮最多 4 题，选项式为主）
+- 扫描 `input/` 目录下的需求文档，自动执行三步转换链：
+  1. `.doc` → `.docx`：运行 `python scripts/doc2docx.py input/`（需 pywin32 + Word/WPS）
+  2. `.docx` → `.md`：运行 `python scripts/docx2md.py input/ md`（需 python-docx）
+  3. `.md/.txt`：直接读取
+- 若无文档或转换失败：进入结构化问答（每轮最多 4 题，**必须使用 AskUserQuestion 工具以选项形式呈现**，用户点击选择）
 
 ### Phase 2：需求分析
 

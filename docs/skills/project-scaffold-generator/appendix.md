@@ -51,9 +51,16 @@ description: "通用项目脚手架生成器：从需求文档或结构化问答
 - 代码无多余注释、无硬编码密钥/密码；敏感信息使用 .env / 配置文件占位 + 示例文件
 - 后端严格分层：Controller → Service → Mapper/Repository
 - 前端强类型：TypeScript interface 定义所有数据结构
-- 安全基线随“项目安全性等级”动态提升：所有等级都必须具备参数校验、密钥外置与 SQL 注入防护；更高等级自动叠加权限、限流、审计、环境隔离等能力
+- 安全基线随"项目安全性等级"动态提升：所有等级都必须具备参数校验、密钥外置与 SQL 注入防护；更高等级自动叠加权限、限流、审计、环境隔离等能力
 - 统一响应：Result{ code, message, data }
 - 统一异常处理：GlobalExceptionHandler（或等价机制）
+- **认证失败响应规范（强制）**：
+  - 未认证请求 → HTTP 401 + JSON `{"code":401,"message":"未登录或登录已过期"}`
+  - 已认证但无权限 → HTTP 403 + JSON `{"code":403,"message":"权限不足"}`
+  - 不得返回 HTML 错误页面，所有错误必须返回 JSON
+  - Java Spring Security：必须配置 `AuthenticationEntryPoint` 返回 401
+  - Python/FastAPI：必须配置 `HTTPException` handler 返回 401
+  - Node.js/Express：必须配置 JWT error handler 返回 401
 
 ## 支持范围（可扩展）
 
@@ -254,3 +261,45 @@ Q4 安全强化重点？
 ## 质量检查清单（生成前/后都要用）
 
 （略；与原始文件一致）
+
+## 首次运行强制标准（生成即跑，不许手动补救）
+
+**核心原则：生成的项目必须在用户执行一次安装命令（如 `pip install -r requirements.txt` + `python main.py`）后直接运行，不得要求用户手动修改代码或手动执行额外 SQL。**
+
+### 通用强制项（所有技术栈）
+
+| # | 检查项 | 为什么重要 |
+|---|--------|-----------|
+| 1 | 入口文件有完整启动代码 | 没有启动代码 = 空壳项目 |
+| 2 | 所有 import 路径可解析 | import 不存在的模块 = ImportError 直接崩溃 |
+| 3 | 依赖清单完整 | 缺包 = ModuleNotFoundError |
+| 4 | Python 包有 `__init__.py` | 缺 init = 包无法被识别 |
+| 5 | 数据库首次运行自动建表 | 不自动建表 = 用户必须手动执行 SQL |
+| 6 | .env 加载代码存在 | 有 .env.example 但没加载代码 = 配置不生效 |
+| 7 | CORS 已配置（前后端分离） | 没 CORS = 前端请求全部被浏览器拦截 |
+| 8 | 跨层调用链完整 | 方法不存在 = 运行时报 AttributeError |
+| 9 | 配置文件可读取 | 格式不匹配 = 配置加载失败 |
+| 10 | 默认端口不冲突 | 占用系统端口 = 启动失败 |
+
+### 技术栈特定强制项
+
+**Java Spring Boot：**
+- pom.xml 中 spring-boot-starter-web 和数据库驱动必须存在
+- application.yml 中数据库配置与 .env 对应
+- 认证入口点配置（401 + JSON）
+
+**Python 桌面应用（Tkinter）：**
+- main.py 中 mainloop() 必须存在
+- 数据库连接使用单例模式
+
+**Python Web（FastAPI/Django）：**
+- uvicorn/django 在依赖中
+- CORS 中间件已配置
+
+**Node.js Express：**
+- package.json 中 scripts.start/dev 存在
+- cors 包在依赖中
+
+**React/Vue 前端：**
+- scripts.dev/build 存在
+- API 请求使用环境变量 base URL

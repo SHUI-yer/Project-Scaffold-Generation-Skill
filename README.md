@@ -283,6 +283,107 @@ workspace/<project-name>/
 - **小白友好**：术语首次出现必须解释"是什么 + 解决什么问题"，给推荐时必须说明理由
 - **点击交互**：所有决策节点使用 AskUserQuestion 选项形式，用户点击回答
 
+## 质量保障体系
+
+### 覆盖范围总览
+
+本系统对生成项目的质量保障覆盖 **15 个技术栈 + 12 个平台**，共 **300+ 个检查项**，全部为 critical 级别（不通过则项目无法运行）。
+
+#### 后端技术栈（10 种）
+
+| 语言 | 框架 | Builder 强制项 | QA 检查项 |
+|------|------|---------------|----------|
+| Java | Spring Boot | 50+ 项 | 12 项 |
+| Java | Quarkus | 12 项 | 5 项 |
+| Java | Micronaut | 10 项 | 5 项 |
+| Python | FastAPI | 10 项 | 7 项 |
+| Python | Flask | 15 项 | 7 项 |
+| Python | Django | 15 项 | 6 项 |
+| Node.js | Express | 20 项 | 7 项 |
+| Node.js | NestJS | 30 项 | 10 项 |
+| Node.js | Koa | 12 项 | 5 项 |
+| Go | Gin/Fiber/Echo | 15 项 | 6 项 |
+| Rust | Axum/Actix/Rocket | 20 项 | 7 项 |
+
+#### 前端框架（4 种）
+
+| 框架 | Builder 强制项 | QA 检查项 |
+|------|---------------|----------|
+| React (Vite+TS) | 15 项 | 6 项 |
+| Vue 3 (Vite+TS) | 12 项 | 5 项 |
+| Svelte/SvelteKit | 15 项 | 7 项 |
+| Python Tkinter | 10 项 | 7 项 |
+
+#### 平台类型（12 种）
+
+| 平台 | 覆盖项 |
+|------|--------|
+| **桌面端** | Electron、Tauri、Qt (C++)、Qt (Python)、WPF (.NET)、JavaFX |
+| **移动端** | Android (Kotlin)、Flutter、React Native、Uni-app |
+| **Web 部署** | Docker、Nginx 反向代理 |
+| **CLI** | 通用（Python/Node.js/Go） |
+
+### 三层质量防线
+
+```text
+Builder（生成时）     → 必须满足技术栈强制清单（缺一项 = 无法进入下一层）
+    ↓
+QA（检查时）         → 按技术栈 + 平台逐项验证（每项 critical）
+    ↓
+FixRouter（修正时）  → runtime / security 问题优先处理
+```
+
+### 关键检查维度
+
+| 维度 | 检查内容 | 级别 |
+|------|---------|------|
+| **runtime** | 入口文件、import 可解析、依赖完整、自动建表、CORS、调用链 | critical |
+| **security** | 认证失败返回 401+JSON、权限不足返回 403+JSON、密码哈希、SQL 注入防护 | critical |
+| **ui_consistency** | 风格预设 tokens 一致性、暗黑模式、主题变量 | major |
+| **engineering** | 构建脚本、环境变量、.gitignore、包结构 | critical |
+
+### 首次运行标准
+
+**生成的项目必须在用户执行一次安装命令后直接运行，不得要求用户手动修改代码。**
+
+10 项通用强制项：
+1. 入口文件有完整启动代码
+2. 所有 import 路径可解析
+3. 依赖清单完整
+4. Python 包有 `__init__.py`
+5. 数据库首次运行自动建表
+6. .env 加载代码存在
+7. CORS 已配置（前后端分离）
+8. 跨层调用链完整
+9. 配置文件可读取
+10. 默认端口不冲突
+
+### UI 风格多样性
+
+每个项目从 **11 种风格预设** 中选择，确保项目间视觉有明显区别：
+
+| 预设 | 名称 | 适用场景 |
+|------|------|---------|
+| aurora-blue | 极光蓝 | 管理系统、SaaS |
+| sunset-orange | 日落橙 | 教育、培训、社区 |
+| forest-green | 森林绿 | 医疗、环保、农业 |
+| royal-purple | 皇家紫 | 奢侈品、设计、创意 |
+| ocean-teal | 海洋青 | 金融、银行、保险 |
+| cherry-red | 樱桃红 | 餐饮、电商、娱乐 |
+| midnight-dark | 午夜黑 | 开发者工具、技术平台 |
+| blossom-pink | 樱花粉 | 女性社区、健康、社交 |
+| slate-corporate | 石墨灰 | 企业后台、ERP、OA |
+| golden-amber | 琥珀金 | 酒店、旅游、高端服务 |
+| lime-fresh | 青柠绿 | 年轻化产品、运动、社交 |
+
+详见 [workflow/ui-style-library.json](workflow/ui-style-library.json)。
+
+### 交互规范
+
+**所有决策节点使用 AskUserQuestion 选项形式，用户点击选择，禁止手动打字。**
+
+覆盖 11 个交互点：项目类型、技术栈、功能模块、UI 风格、安全等级、构建顺序、架构确认、Layer 确认、QA 结果、修正方案、最终确认。
+
 ## 详细文档
 
 | 文档 | 路径 | 说明 |
@@ -290,6 +391,7 @@ workspace/<project-name>/
 | 工作流调度器 | [workflow/orchestrator.md](workflow/orchestrator.md) | 完整阶段定义 + 企业级目录规范 |
 | 角色定义 | `workflow/roles/` 目录 | 6 个角色的详细行为约束 |
 | JSON Schema | `workflow/schema/` 目录 | 6 个状态文件的格式定义 |
+| 风格预设库 | [workflow/ui-style-library.json](workflow/ui-style-library.json) | 11 种差异化 UI 风格 |
 | 交付文档模板 | `workflow/templates/` 目录 | 答辩报告 / 打包指南 / 项目总结 |
 | 跨平台适配 | [docs/platform-bridge.md](docs/platform-bridge.md) | Trae / Claude Code / Codex 接入指南 |
 | Agent 指令 | [AGENTS.md](AGENTS.md) | Codex / 通用 Agent 的入口文件 |

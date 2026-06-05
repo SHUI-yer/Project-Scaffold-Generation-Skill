@@ -20,7 +20,7 @@
         "properties": {
           "category": {
             "type": "string",
-            "enum": ["functionality", "security", "ui_consistency", "type_safety", "naming", "engineering", "documentation"],
+            "enum": ["functionality", "runtime", "security", "ui_consistency", "type_safety", "naming", "engineering", "documentation"],
             "description": "检查类别"
           },
           "item": { "type": "string", "description": "检查项名称" },

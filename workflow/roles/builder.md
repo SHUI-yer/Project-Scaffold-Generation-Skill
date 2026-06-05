@@ -22,6 +22,14 @@
 - 每个 Layer 生成后必须输出：文件清单 + 启动方式 + 验收点
 - 必须等用户确认当前 Layer 后才进入下一个 Layer（**使用 AskUserQuestion 以选项形式呈现确认，选项至少包含：继续 / 小改 / 重做**）
 - 代码遵循：无多余注释、无硬编码密钥、命名规范统一
+- **启动脚本（start.bat / start.sh）必须使用英文**，不得包含中文字符（避免编码问题导致脚本执行失败）
+- **一键启动脚本必须包含以下自动化流程**：
+  1. 检测必要环境（Java/Node.js/Python 等），**缺失时自动下载安装到项目 `.tools/` 目录**（不依赖系统包管理器，不需管理员权限），下载失败时给出明确安装链接
+  2. 自动安装前端依赖（检测 node_modules 是否存在，不存在则自动 npm install）
+  3. 启动后端并等待就绪（轮询端口，确认后再启动前端，避免 ECONNREFUSED）
+  4. 启动前端
+  5. 自动打开浏览器访问前端地址
+  6. 后端使用 Maven Wrapper（`mvnw`/`mvnw.cmd`），不要求用户手动安装 Maven
 - 后端严格分层（Controller → Service → Repository）、前端强类型（TS interface）
 - **安全配置强制要求（所有项目必须包含）**：
   - 认证入口点：未认证请求返回 HTTP 401 + JSON（不得返回 403 或 HTML）
@@ -29,10 +37,11 @@
   - Java Spring Security：必须配置 AuthenticationEntryPoint
   - Python FastAPI：必须配置 HTTPException handler
   - Node.js Express：必须配置 JWT error handler
+- **构建完成后自动打包**：QA 通过后自动生成可分发 zip 到 `workspace/<project>.zip`，排除 `target/`、`node_modules/`、`.tools/`、`.idea/`、`_workflow/` 等非必要目录，zip 内包含完整项目（含启动脚本 + Maven Wrapper），对方解压后双击 start 即可运行
 
 ## 首次运行强制清单（生成即跑，不许手动补救）
 
-**以下 10 项是"生成后能否直接运行"的硬性门槛，缺任何一项都属于 critical 级别问题：**
+**以下 13 项是"生成后能否直接运行"的硬性门槛，缺任何一项都属于 critical 级别问题：**
 
 | # | 检查项 | 说明 |
 |---|--------|------|
@@ -46,6 +55,9 @@
 | 8 | **跨层调用链完整** | Controller → Service → Repository/DAO 的调用链必须完整，不得出现 Controller 直接调用 Repository 或 Service 方法不存在 |
 | 9 | **配置文件可读取** | 代码中读取配置的方式必须与配置文件格式一致（如 YAML 对应 `yaml.safe_load()`，JSON 对应 `json.load()`） |
 | 10 | **默认端口不冲突** | 后端默认端口避免常用占用端口（80/443/3306/5432），推荐 8080/3000/5000 等开发端口 |
+| 11 | **Java 命名空间正确** | Spring Boot 3.x 项目中所有 Java 文件必须使用 `jakarta.*`（不得出现 `javax.annotation.*` / `javax.persistence.*`），否则编译失败 |
+| 12 | **IDE 可识别源码根目录** | 前后端分离的 Java 项目，根目录必须有 `pom.xml`（聚合模块）使 IDE 能自动识别 `src/main/java` 为 Source Root；前端项目 `package.json` 的 `type` 字段正确 |
+| 13 | **jjwt API 版本匹配** | 使用 jjwt 0.12.x 时必须用新版 API：`Jwts.parser()`（非 `parserBuilder()`）、`.verifyWith(key)`（非 `.setSigningKey()`）、`.parseSignedClaims()`（非 `.parseClaimsJws()`）、`.getPayload()`（非 `.getBody()`）、`.subject()`/`.issuedAt()`/`.expiration()`（非 `set` 前缀）、`.signWith(key)`（不传 SignatureAlgorithm）、key 字段类型必须为 `javax.crypto.SecretKey`（非 `java.security.Key`） |
 
 ### 各技术栈强制清单（缺项 = critical）
 
@@ -57,8 +69,9 @@
 - `spring-boot-starter-data-jpa` 或 `mybatis-spring-boot-starter` 必须存在（有数据库时）
 - `spring-boot-starter-security` 必须存在（有认证时）
 - `spring-boot-starter-validation` 必须存在（有参数校验时）
-- `spring-boot-maven-plugin` 必须存在（否则 `mvn spring-boot:run` 无法执行）
+- `spring-boot-maven-plugin` 必须存在（否则 `mvnw spring-boot:run` 无法执行）
 - Java 版本必须 ≥ 17（Spring Boot 3.x 要求）
+- **必须包含 Maven Wrapper**（`mvnw` + `mvnw.cmd` + `.mvn/wrapper/maven-wrapper.properties`），确保用户无需手动安装 Maven 即可构建
 
 **启动类：**
 - `@SpringBootApplication` 注解必须存在

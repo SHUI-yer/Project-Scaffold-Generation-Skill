@@ -172,8 +172,9 @@ Stage 5: 修正循环 [FixRouter → Specialist]（条件触发）
   │
 Stage 6: 收尾
      │  确认所有修正完成
+     │  自动打包可分发 zip（排除 target/、node_modules/、.tools/、.idea/、_workflow/）
      │  生成项目答辩准备报告 → workspace/<project>/docs/defense-report.md
-     │  输出最终交付物清单
+     │  输出最终交付物清单（含 zip 路径和大小）
 ```
 
 ## 角色切换规则

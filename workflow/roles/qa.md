@@ -17,10 +17,17 @@
 
 ## 行为约束
 
-- 只检查不修改代码（QA 不改代码，只出报告）
 - 每个检查项必须标注：category、status、location、severity、suggestion
 - 对"未实现/不完整"的项，severity 不得低于 major
 - 输出通俗易懂的检查摘要，让小白也能看懂
+- **自动修复规则**：QA 检查过程中发现以下问题时，必须**直接修复**（不只报告）：
+  - `javax.annotation.*` → `jakarta.annotation.*`（Spring Boot 3.x 命名空间错误，编译必挂）
+  - jjwt 0.12.x API 兼容（`parserBuilder()` → `parser()`、`setSigningKey()` → `verifyWith()`、`parseClaimsJws()` → `parseSignedClaims()`、`getBody()` → `getPayload()`、`setSubject/setIssuedAt/setExpiration` → `subject/issuedAt/expiration`、`signWith(key, HS256)` → `signWith(key)`、`Key` 字段类型 → `SecretKey`）
+  - 前后端分离项目根目录缺少 `pom.xml`（Java 项目 IDE 无法识别源码根目录）
+  - Java/Maven 项目缺少 Maven Wrapper（`mvnw`/`mvnw.cmd`/`.mvn/wrapper/maven-wrapper.properties`）
+  - 缺少 `.gitignore`（必须包含 target/、node_modules/、.idea/ 等标准排除项）
+  - 修复后在 quality-report.json 的 `auto_fixed` 字段中记录修复内容
+- 除上述自动修复项外，其余问题仍按原规则：只检查不修改代码，只出报告
 
 ## 检查维度
 
@@ -32,7 +39,7 @@
 | ui_consistency | CSS 变量、暗黑模式、主题一致性 |
 | type_safety | 前后端数据类型匹配、TS interface 完整性 |
 | naming | 命名规范一致性、RESTful API 规范 |
-| engineering | 构建脚本可用、环境变量配置、.gitignore 完整 |
+| engineering | 构建脚本可用、环境变量配置、.gitignore 完整、**IDE 兼容性**（见下方详细清单） |
 | documentation | README、配置说明、交付文档完整性、答辩报告完整性 |
 
 ### runtime 类别详细检查清单（首次运行可执行性）
@@ -62,6 +69,24 @@
 | 密码存储 | 不得明文存储，使用哈希（SHA256/bcrypt/argon2） |
 | SQL 注入防护 | 所有查询使用参数化查询 |
 | 敏感配置 | 数据库密码等不得硬编码，使用 .env 或配置文件 |
+
+### engineering 类别详细检查清单
+
+**每项都是 critical 级别——不通过意味着 IDE 无法识别项目或构建失败：**
+
+| 检查项 | 通过标准 | 检查方法 | 自动修复 |
+|--------|---------|---------|---------|
+| Java 源码根目录 | IDE 能识别 `src/main/java` 为 Source Root | 检查是否存在根 pom.xml 或 IDE 配置 | 是：缺根 pom.xml 时自动创建聚合 pom.xml |
+| javax → jakarta | Spring Boot 3.x 项目中无 `javax.annotation.*` 或 `javax.persistence.*` import | Grep 扫描所有 Java 文件 | 是：自动替换为 `jakarta.*` |
+| jjwt 0.12.x API | 使用 jjwt 0.12.x 时无旧版 API（`parserBuilder`/`setSigningKey`/`parseClaimsJws`/`getBody`/`setSubject`），且 key 字段类型为 `SecretKey`（非 `Key`） | Grep 扫描 JWT 相关 Java 文件 | 是：自动替换为新版 API |
+| .gitignore 完整 | 包含 target/、node_modules/、.idea/、.DS_Store 等标准排除项 | 读取 .gitignore 内容检查 | 是：缺少时自动创建 |
+| Maven Wrapper 存在 | Java/Maven 项目必须包含 `mvnw`、`mvnw.cmd`、`.mvn/wrapper/maven-wrapper.properties` | 检查 backend 目录下三个文件 | 是：缺少时自动生成 |
+| 一键启动脚本完整 | start.bat/start.sh 包含：环境检测 → 自动安装依赖 → 等待后端就绪 → 启动前端 → 打开浏览器 | 读取脚本内容检查 6 项流程 | 否（报告） |
+| pom.xml 依赖完整 | spring-boot-starter-web、数据库驱动、spring-boot-maven-plugin 均存在 | 对比 pom.xml 依赖和代码 import | 否（报告） |
+| package.json 脚本完整 | scripts.dev 和 scripts.build 均存在 | 读取 package.json 检查 | 否（报告） |
+| 前端构建工具配置 | vite.config 中 plugins 包含 vue()/react() 等框架插件 | 读取 vite.config 检查 | 否（报告） |
+| 后端构建插件 | Maven 项目有 spring-boot-maven-plugin；Gradle 有 spring-boot 插件 | 读取构建配置检查 | 否（报告） |
+| .env.example 存在 | 有环境变量引用的项目必须有 .env.example 模板 | 检查项目根目录 | 否（报告） |
 
 ### 各技术栈 runtime 详细检查清单
 

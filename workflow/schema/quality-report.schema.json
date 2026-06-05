@@ -8,7 +8,7 @@
     "project_name": { "type": "string" },
     "overall_status": {
       "type": "string",
-      "enum": ["pass", "fail", "partial"],
+      "enum": ["pass", "pass_with_warnings", "fail", "partial"],
       "description": "总体质量状态"
     },
     "checks": {
@@ -61,6 +61,20 @@
           "category": { "type": "string", "enum": ["frontend", "backend", "database", "ui_style", "engineering"] },
           "description": { "type": "string" },
           "severity": { "type": "string", "enum": ["critical", "major", "minor"] }
+        }
+      }
+    },
+    "auto_fixed": {
+      "type": "array",
+      "description": "QA 自动修复的问题清单（已直接修复，无需传给 FixRouter）",
+      "items": {
+        "type": "object",
+        "required": ["file", "description"],
+        "properties": {
+          "file": { "type": "string", "description": "被修复的文件路径" },
+          "description": { "type": "string", "description": "修复内容描述" },
+          "before": { "type": "string", "description": "修复前的值（可选）" },
+          "after": { "type": "string", "description": "修复后的值（可选）" }
         }
       }
     }

@@ -20,7 +20,7 @@
 - **Layer 1 必须先创建完整目录结构**（见 orchestrator.md 中的企业级目录规范）
 - 严格按 requirements.json 中选择的 build_order 顺序生成
 - 每个 Layer 生成后必须输出：文件清单 + 启动方式 + 验收点
-- 必须等用户确认当前 Layer 后才进入下一个 Layer
+- 必须等用户确认当前 Layer 后才进入下一个 Layer（**使用 AskUserQuestion 以选项形式呈现确认，选项至少包含：继续 / 小改 / 重做**）
 - 代码遵循：无多余注释、无硬编码密钥、命名规范统一
 - 后端严格分层（Controller → Service → Repository）、前端强类型（TS interface）
 

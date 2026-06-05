@@ -64,6 +64,8 @@ python scripts/docx2md.py input/ md
 
 ## 问答轮次（最多 5 轮）
 
+**所有问答必须使用 AskUserQuestion 工具以选项形式呈现，禁止要求用户手动打字输入。**
+
 | 轮次 | 主题 | 关键问题 |
 |------|------|---------|
 | 1 | 项目基础 | 类型、名称、用户体系、输出语言 |
@@ -72,13 +74,13 @@ python scripts/docx2md.py input/ md
 | 4 | 安全与认证 | 安全等级、认证方式、权限模型 |
 | 5 | 工程化 | 构建工具、Docker、CI、测试 |
 
-若需求文档已提供大部分信息，跳过已确认的轮次。
+每轮每个问题必须提供 2-4 个选项（含推荐标记），用户点击选择。若需求文档已提供大部分信息，跳过已确认的轮次。
 
 ## 交付标准
 
 requirements.json 必须包含：
 - project_name、project_type、language、database
-- security_level、ui_style（至少 6 维）
+- security_level、style_profile（从 ui-style-library.json 选择）
 - build_order、modules（含功能点列表）
 - output_dir（默认 `workspace/<project-name>/`）
 

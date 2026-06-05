@@ -6,12 +6,51 @@
 
 ## 30 秒上手
 
+> **首次使用请先运行环境配置脚本**（只需一次）：
+> ```powershell
+> powershell -ExecutionPolicy Bypass -File scripts/setup-env.ps1
+> ```
+> 脚本会自动检查 Python 并安装所需的文档转换依赖。详见 [使用前提](#使用前提)。
+
 1. 在你的 Code Agent 平台中打开本仓库
 2. 把需求文档放到 `input/` 目录（支持 `.md` / `.txt` / `.docx` / `.doc`）
 3. 对 Agent 说"帮我从需求文档生成一个完整项目"
 4. Agent 会用**点击选项**的方式引导你完成每个决策（无需手动打字）
 5. 按工作流自动切换角色（Planner → Architect → Builder → QA）
 6. QA 检查不通过？自动进入修正循环（FixRouter → Specialist）
+
+## 使用前提
+
+### 必备（零配置）
+
+只需要一个 Code Agent 平台即可开始使用，无需安装任何依赖：
+
+| 你需要的 | 说明 |
+|---------|------|
+| Code Agent 平台 | Trae / Claude Code / Codex / 其他支持 Agent 的 IDE |
+| 本仓库 | 克隆或下载到本地 |
+| 需求文档 | `.md` 或 `.txt` 格式，放到 `input/` 目录 |
+
+### 可选（一键配置）
+
+如果你需要处理 `.doc` / `.docx` 格式的需求文档，运行一键配置脚本即可：
+
+```powershell
+# Windows（推荐）
+powershell -ExecutionPolicy Bypass -File scripts/setup-env.ps1
+
+# 或者直接右键 scripts/setup-env.ps1 -> 使用 PowerShell 运行
+```
+
+脚本会自动：检查 Python → 安装 python-docx → 安装 pywin32（Windows）→ 检测 Word/WPS → 报告状态。
+
+| 需求文档格式 | 脚本会安装 | 额外要求 |
+|-------------|-----------|---------|
+| `.md` / `.txt` | 无 | 无（零配置） |
+| `.docx` | python-docx | 无 |
+| `.doc`（旧版 Word） | pywin32 | 本机需装 Word 或 WPS |
+
+> **小白提示**：如果你的需求文档是 `.md` 或 `.txt`，直接跳过这一步，零配置就能用。
 
 ## 工作流架构
 
@@ -100,6 +139,7 @@ Project-build-SKILL/
 │  └─ .gitkeep                        <- 放 .md / .txt / .docx / .doc 文件
 │
 ├─ scripts/                           <- 工具脚本
+│  ├─ setup-env.ps1                   <- 一键环境配置脚本（Windows）
 │  ├─ doc2docx.py                     <- .doc → .docx 转换（依赖 pywin32 + Word/WPS）
 │  └─ docx2md.py                      <- .docx → .md 转换（依赖 python-docx）
 │

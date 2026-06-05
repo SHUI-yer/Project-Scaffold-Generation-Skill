@@ -1,0 +1,610 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "UI 风格预设库 — 每个项目必须从这里选择一个风格预设，确保项目间视觉差异化",
+  "version": "1.0.0",
+  "profiles": {
+    "aurora-blue": {
+      "name": "极光蓝",
+      "description": "科技感蓝色主调，适合管理系统、SaaS 平台",
+      "category": "corporate",
+      "colors": {
+        "primary": "#2563EB",
+        "primary_light": "#60A5FA",
+        "primary_dark": "#1D4ED8",
+        "secondary": "#7C3AED",
+        "accent": "#06B6D4",
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "danger": "#EF4444",
+        "background": "#F8FAFC",
+        "surface": "#FFFFFF",
+        "surface_alt": "#F1F5F9",
+        "text_primary": "#0F172A",
+        "text_secondary": "#64748B",
+        "border": "#E2E8F0",
+        "sidebar_bg": "#1E293B",
+        "sidebar_text": "#CBD5E1",
+        "sidebar_active": "#2563EB"
+      },
+      "typography": {
+        "font_family": "'Inter', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "24px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "600",
+        "line_height": "1.6"
+      },
+      "components": {
+        "border_radius": "8px",
+        "border_radius_sm": "4px",
+        "border_radius_lg": "12px",
+        "shadow_sm": "0 1px 2px rgba(0,0,0,0.05)",
+        "shadow_md": "0 4px 6px -1px rgba(0,0,0,0.1)",
+        "shadow_lg": "0 10px 15px -3px rgba(0,0,0,0.1)",
+        "button_style": "rounded-solid",
+        "input_style": "outlined",
+        "card_style": "elevated",
+        "table_style": "striped",
+        "animation_speed": "200ms"
+      },
+      "layout": {
+        "sidebar_width": "220px",
+        "content_padding": "24px",
+        "grid_gap": "16px",
+        "max_width": "1200px"
+      }
+    },
+
+    "sunset-orange": {
+      "name": "日落橙",
+      "description": "温暖活力的橙色系，适合教育、培训、社区类项目",
+      "category": "warm",
+      "colors": {
+        "primary": "#EA580C",
+        "primary_light": "#FB923C",
+        "primary_dark": "#C2410C",
+        "secondary": "#DC2626",
+        "accent": "#F97316",
+        "success": "#16A34A",
+        "warning": "#EAB308",
+        "danger": "#DC2626",
+        "background": "#FFFBF5",
+        "surface": "#FFFFFF",
+        "surface_alt": "#FFF7ED",
+        "text_primary": "#1C1917",
+        "text_secondary": "#78716C",
+        "border": "#E7E5E4",
+        "sidebar_bg": "#292524",
+        "sidebar_text": "#D6D3D1",
+        "sidebar_active": "#EA580C"
+      },
+      "typography": {
+        "font_family": "'Nunito', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "22px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "700",
+        "line_height": "1.7"
+      },
+      "components": {
+        "border_radius": "12px",
+        "border_radius_sm": "6px",
+        "border_radius_lg": "16px",
+        "shadow_sm": "0 1px 3px rgba(0,0,0,0.08)",
+        "shadow_md": "0 4px 8px rgba(234,88,12,0.08)",
+        "shadow_lg": "0 8px 24px rgba(234,88,12,0.12)",
+        "button_style": "pill-solid",
+        "input_style": "filled",
+        "card_style": "bordered",
+        "table_style": "clean",
+        "animation_speed": "250ms"
+      },
+      "layout": {
+        "sidebar_width": "240px",
+        "content_padding": "28px",
+        "grid_gap": "20px",
+        "max_width": "1280px"
+      }
+    },
+
+    "forest-green": {
+      "name": "森林绿",
+      "description": "自然清新的绿色系，适合医疗、环保、农业类项目",
+      "category": "nature",
+      "colors": {
+        "primary": "#059669",
+        "primary_light": "#34D399",
+        "primary_dark": "#047857",
+        "secondary": "#0D9488",
+        "accent": "#10B981",
+        "success": "#059669",
+        "warning": "#D97706",
+        "danger": "#E11D48",
+        "background": "#F0FDF4",
+        "surface": "#FFFFFF",
+        "surface_alt": "#ECFDF5",
+        "text_primary": "#14532D",
+        "text_secondary": "#4B5563",
+        "border": "#D1FAE5",
+        "sidebar_bg": "#14532D",
+        "sidebar_text": "#A7F3D0",
+        "sidebar_active": "#059669"
+      },
+      "typography": {
+        "font_family": "'Source Sans 3', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "22px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "600",
+        "line_height": "1.6"
+      },
+      "components": {
+        "border_radius": "6px",
+        "border_radius_sm": "3px",
+        "border_radius_lg": "10px",
+        "shadow_sm": "0 1px 2px rgba(5,150,105,0.06)",
+        "shadow_md": "0 2px 8px rgba(5,150,105,0.08)",
+        "shadow_lg": "0 4px 16px rgba(5,150,105,0.1)",
+        "button_style": "rounded-solid",
+        "input_style": "underlined",
+        "card_style": "flat",
+        "table_style": "bordered",
+        "animation_speed": "180ms"
+      },
+      "layout": {
+        "sidebar_width": "200px",
+        "content_padding": "20px",
+        "grid_gap": "12px",
+        "max_width": "1100px"
+      }
+    },
+
+    "royal-purple": {
+      "name": "皇家紫",
+      "description": "高贵典雅的紫色系，适合奢侈品、设计、创意类项目",
+      "category": "luxury",
+      "colors": {
+        "primary": "#7C3AED",
+        "primary_light": "#A78BFA",
+        "primary_dark": "#6D28D9",
+        "secondary": "#EC4899",
+        "accent": "#C084FC",
+        "success": "#22C55E",
+        "warning": "#FBBF24",
+        "danger": "#F43F5E",
+        "background": "#FAF5FF",
+        "surface": "#FFFFFF",
+        "surface_alt": "#F5F3FF",
+        "text_primary": "#1E1B4B",
+        "text_secondary": "#6B7280",
+        "border": "#E9D5FF",
+        "sidebar_bg": "#1E1B4B",
+        "sidebar_text": "#C4B5FD",
+        "sidebar_active": "#7C3AED"
+      },
+      "typography": {
+        "font_family": "'Playfair Display', 'Microsoft YaHei', serif",
+        "font_size_base": "15px",
+        "font_size_small": "13px",
+        "font_size_large": "17px",
+        "font_size_heading": "26px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "700",
+        "line_height": "1.7"
+      },
+      "components": {
+        "border_radius": "4px",
+        "border_radius_sm": "2px",
+        "border_radius_lg": "8px",
+        "shadow_sm": "0 1px 3px rgba(124,58,237,0.06)",
+        "shadow_md": "0 4px 12px rgba(124,58,237,0.1)",
+        "shadow_lg": "0 8px 24px rgba(124,58,237,0.15)",
+        "button_style": "sharp-solid",
+        "input_style": "outlined",
+        "card_style": "elevated",
+        "table_style": "minimal",
+        "animation_speed": "300ms"
+      },
+      "layout": {
+        "sidebar_width": "260px",
+        "content_padding": "32px",
+        "grid_gap": "24px",
+        "max_width": "1300px"
+      }
+    },
+
+    "ocean-teal": {
+      "name": "海洋青",
+      "description": "沉稳专业的青色系，适合金融、银行、保险类项目",
+      "category": "corporate",
+      "colors": {
+        "primary": "#0D9488",
+        "primary_light": "#2DD4BF",
+        "primary_dark": "#0F766E",
+        "secondary": "#0891B2",
+        "accent": "#14B8A6",
+        "success": "#059669",
+        "warning": "#F59E0B",
+        "danger": "#E11D48",
+        "background": "#F0FDFA",
+        "surface": "#FFFFFF",
+        "surface_alt": "#F0FDFA",
+        "text_primary": "#134E4A",
+        "text_secondary": "#5EEAD4",
+        "border": "#99F6E4",
+        "sidebar_bg": "#134E4A",
+        "sidebar_text": "#99F6E4",
+        "sidebar_active": "#0D9488"
+      },
+      "typography": {
+        "font_family": "'IBM Plex Sans', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "24px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "500",
+        "line_height": "1.5"
+      },
+      "components": {
+        "border_radius": "0px",
+        "border_radius_sm": "0px",
+        "border_radius_lg": "0px",
+        "shadow_sm": "none",
+        "shadow_md": "0 1px 0 #99F6E4",
+        "shadow_lg": "0 2px 0 #0D9488",
+        "button_style": "square-solid",
+        "input_style": "borderless",
+        "card_style": "bordered",
+        "table_style": "lined",
+        "animation_speed": "150ms"
+      },
+      "layout": {
+        "sidebar_width": "200px",
+        "content_padding": "24px",
+        "grid_gap": "0px",
+        "max_width": "1200px"
+      }
+    },
+
+    "cherry-red": {
+      "name": "樱桃红",
+      "description": "热情大胆的红色系，适合餐饮、电商、娱乐类项目",
+      "category": "bold",
+      "colors": {
+        "primary": "#DC2626",
+        "primary_light": "#F87171",
+        "primary_dark": "#B91C1C",
+        "secondary": "#EA580C",
+        "accent": "#F43F5E",
+        "success": "#16A34A",
+        "warning": "#F59E0B",
+        "danger": "#DC2626",
+        "background": "#FFF1F2",
+        "surface": "#FFFFFF",
+        "surface_alt": "#FFF1F2",
+        "text_primary": "#1F2937",
+        "text_secondary": "#6B7280",
+        "border": "#FECDD3",
+        "sidebar_bg": "#1F2937",
+        "sidebar_text": "#FCA5A5",
+        "sidebar_active": "#DC2626"
+      },
+      "typography": {
+        "font_family": "'Poppins', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "24px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "600",
+        "line_height": "1.6"
+      },
+      "components": {
+        "border_radius": "16px",
+        "border_radius_sm": "8px",
+        "border_radius_lg": "24px",
+        "shadow_sm": "0 2px 4px rgba(220,38,38,0.06)",
+        "shadow_md": "0 4px 12px rgba(220,38,38,0.1)",
+        "shadow_lg": "0 8px 24px rgba(220,38,38,0.15)",
+        "button_style": "pill-solid",
+        "input_style": "filled",
+        "card_style": "elevated",
+        "table_style": "cards",
+        "animation_speed": "200ms"
+      },
+      "layout": {
+        "sidebar_width": "240px",
+        "content_padding": "24px",
+        "grid_gap": "16px",
+        "max_width": "1200px"
+      }
+    },
+
+    "midnight-dark": {
+      "name": "午夜黑",
+      "description": "深色极简风格，适合开发者工具、技术平台、数据分析",
+      "category": "dark",
+      "colors": {
+        "primary": "#818CF8",
+        "primary_light": "#A5B4FC",
+        "primary_dark": "#6366F1",
+        "secondary": "#38BDF8",
+        "accent": "#C084FC",
+        "success": "#34D399",
+        "warning": "#FBBF24",
+        "danger": "#FB7185",
+        "background": "#0F172A",
+        "surface": "#1E293B",
+        "surface_alt": "#334155",
+        "text_primary": "#F8FAFC",
+        "text_secondary": "#94A3B8",
+        "border": "#334155",
+        "sidebar_bg": "#020617",
+        "sidebar_text": "#CBD5E1",
+        "sidebar_active": "#818CF8"
+      },
+      "typography": {
+        "font_family": "'JetBrains Mono', 'Microsoft YaHei', monospace",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "20px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "500",
+        "line_height": "1.6"
+      },
+      "components": {
+        "border_radius": "6px",
+        "border_radius_sm": "4px",
+        "border_radius_lg": "8px",
+        "shadow_sm": "0 0 0 1px #334155",
+        "shadow_md": "0 0 0 1px #475569",
+        "shadow_lg": "0 0 20px rgba(129,140,248,0.15)",
+        "button_style": "rounded-outline",
+        "input_style": "filled",
+        "card_style": "bordered",
+        "table_style": "compact",
+        "animation_speed": "150ms"
+      },
+      "layout": {
+        "sidebar_width": "200px",
+        "content_padding": "20px",
+        "grid_gap": "12px",
+        "max_width": "1400px"
+      }
+    },
+
+    "blossom-pink": {
+      "name": "樱花粉",
+      "description": "柔和温馨的粉色系，适合女性社区、健康、社交类项目",
+      "category": "soft",
+      "colors": {
+        "primary": "#EC4899",
+        "primary_light": "#F9A8D4",
+        "primary_dark": "#DB2777",
+        "secondary": "#A855F7",
+        "accent": "#F472B6",
+        "success": "#22C55E",
+        "warning": "#FACC15",
+        "danger": "#EF4444",
+        "background": "#FDF2F8",
+        "surface": "#FFFFFF",
+        "surface_alt": "#FCE7F3",
+        "text_primary": "#1F2937",
+        "text_secondary": "#9CA3AF",
+        "border": "#FBCFE8",
+        "sidebar_bg": "#FCE7F3",
+        "sidebar_text": "#9D174D",
+        "sidebar_active": "#EC4899"
+      },
+      "typography": {
+        "font_family": "'Quicksand', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "22px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "600",
+        "line_height": "1.7"
+      },
+      "components": {
+        "border_radius": "20px",
+        "border_radius_sm": "12px",
+        "border_radius_lg": "28px",
+        "shadow_sm": "0 2px 8px rgba(236,72,153,0.06)",
+        "shadow_md": "0 4px 16px rgba(236,72,153,0.08)",
+        "shadow_lg": "0 8px 32px rgba(236,72,153,0.12)",
+        "button_style": "pill-solid",
+        "input_style": "filled",
+        "card_style": "soft-shadow",
+        "table_style": "rounded",
+        "animation_speed": "300ms"
+      },
+      "layout": {
+        "sidebar_width": "220px",
+        "content_padding": "24px",
+        "grid_gap": "16px",
+        "max_width": "1200px"
+      }
+    },
+
+    "slate-corporate": {
+      "name": "石墨灰",
+      "description": "低调专业的灰色系，适合企业后台、ERP、OA 系统",
+      "category": "corporate",
+      "colors": {
+        "primary": "#475569",
+        "primary_light": "#94A3B8",
+        "primary_dark": "#334155",
+        "secondary": "#6366F1",
+        "accent": "#3B82F6",
+        "success": "#22C55E",
+        "warning": "#F59E0B",
+        "danger": "#EF4444",
+        "background": "#F8FAFC",
+        "surface": "#FFFFFF",
+        "surface_alt": "#F1F5F9",
+        "text_primary": "#0F172A",
+        "text_secondary": "#64748B",
+        "border": "#E2E8F0",
+        "sidebar_bg": "#1E293B",
+        "sidebar_text": "#94A3B8",
+        "sidebar_active": "#6366F1"
+      },
+      "typography": {
+        "font_family": "'Inter', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "13px",
+        "font_size_small": "11px",
+        "font_size_large": "15px",
+        "font_size_heading": "20px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "600",
+        "line_height": "1.5"
+      },
+      "components": {
+        "border_radius": "4px",
+        "border_radius_sm": "2px",
+        "border_radius_lg": "6px",
+        "shadow_sm": "0 1px 2px rgba(0,0,0,0.06)",
+        "shadow_md": "0 2px 4px rgba(0,0,0,0.08)",
+        "shadow_lg": "0 4px 8px rgba(0,0,0,0.1)",
+        "button_style": "square-solid",
+        "input_style": "outlined",
+        "card_style": "flat",
+        "table_style": "striped",
+        "animation_speed": "100ms"
+      },
+      "layout": {
+        "sidebar_width": "180px",
+        "content_padding": "16px",
+        "grid_gap": "8px",
+        "max_width": "1400px"
+      }
+    },
+
+    "golden-amber": {
+      "name": "琥珀金",
+      "description": "奢华温暖的金色系，适合酒店、旅游、高端服务类项目",
+      "category": "luxury",
+      "colors": {
+        "primary": "#D97706",
+        "primary_light": "#FCD34D",
+        "primary_dark": "#B45309",
+        "secondary": "#92400E",
+        "accent": "#F59E0B",
+        "success": "#059669",
+        "warning": "#F59E0B",
+        "danger": "#DC2626",
+        "background": "#FFFBEB",
+        "surface": "#FFFFFF",
+        "surface_alt": "#FEF3C7",
+        "text_primary": "#1C1917",
+        "text_secondary": "#78716C",
+        "border": "#FDE68A",
+        "sidebar_bg": "#451A03",
+        "sidebar_text": "#FDE68A",
+        "sidebar_active": "#D97706"
+      },
+      "typography": {
+        "font_family": "'Cormorant Garamond', 'Microsoft YaHei', serif",
+        "font_size_base": "15px",
+        "font_size_small": "13px",
+        "font_size_large": "17px",
+        "font_size_heading": "28px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "600",
+        "line_height": "1.8"
+      },
+      "components": {
+        "border_radius": "2px",
+        "border_radius_sm": "0px",
+        "border_radius_lg": "4px",
+        "shadow_sm": "0 1px 0 #FDE68A",
+        "shadow_md": "0 2px 4px rgba(217,119,6,0.08)",
+        "shadow_lg": "0 4px 12px rgba(217,119,6,0.12)",
+        "button_style": "square-outline",
+        "input_style": "underlined",
+        "card_style": "bordered",
+        "table_style": "elegant",
+        "animation_speed": "350ms"
+      },
+      "layout": {
+        "sidebar_width": "250px",
+        "content_padding": "32px",
+        "grid_gap": "20px",
+        "max_width": "1200px"
+      }
+    },
+
+    "lime-fresh": {
+      "name": "青柠绿",
+      "description": "清新活泼的黄绿色系，适合年轻化产品、运动、社交类项目",
+      "category": "vibrant",
+      "colors": {
+        "primary": "#65A30D",
+        "primary_light": "#A3E635",
+        "primary_dark": "#4D7C0F",
+        "secondary": "#0EA5E9",
+        "accent": "#84CC16",
+        "success": "#22C55E",
+        "warning": "#FACC15",
+        "danger": "#EF4444",
+        "background": "#FEFCE8",
+        "surface": "#FFFFFF",
+        "surface_alt": "#F7FEE7",
+        "text_primary": "#1A2E05",
+        "text_secondary": "#6B7280",
+        "border": "#D9F99D",
+        "sidebar_bg": "#1A2E05",
+        "sidebar_text": "#BEF264",
+        "sidebar_active": "#65A30D"
+      },
+      "typography": {
+        "font_family": "'Nunito', 'Microsoft YaHei', sans-serif",
+        "font_size_base": "14px",
+        "font_size_small": "12px",
+        "font_size_large": "16px",
+        "font_size_heading": "22px",
+        "font_weight_normal": "400",
+        "font_weight_bold": "700",
+        "line_height": "1.6"
+      },
+      "components": {
+        "border_radius": "10px",
+        "border_radius_sm": "6px",
+        "border_radius_lg": "16px",
+        "shadow_sm": "0 1px 3px rgba(101,163,13,0.06)",
+        "shadow_md": "0 4px 8px rgba(101,163,13,0.08)",
+        "shadow_lg": "0 8px 20px rgba(101,163,13,0.12)",
+        "button_style": "pill-solid",
+        "input_style": "filled",
+        "card_style": "soft-shadow",
+        "table_style": "cards",
+        "animation_speed": "200ms"
+      },
+      "layout": {
+        "sidebar_width": "220px",
+        "content_padding": "24px",
+        "grid_gap": "16px",
+        "max_width": "1200px"
+      }
+    }
+  },
+  "categories": {
+    "corporate": ["aurora-blue", "ocean-teal", "slate-corporate"],
+    "warm": ["sunset-orange"],
+    "nature": ["forest-green"],
+    "luxury": ["royal-purple", "golden-amber"],
+    "bold": ["cherry-red"],
+    "dark": ["midnight-dark"],
+    "soft": ["blossom-pink"],
+    "vibrant": ["lime-fresh"]
+  }
+}

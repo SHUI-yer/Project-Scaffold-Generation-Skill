@@ -222,6 +222,62 @@ Stage 6: 收尾
 - 术语解释写在选项的 description 字段里
 - 阶段间确认至少提供"继续 / 返回修改 / 暂停"三个选项
 
+## UI 风格多样性规则（全局生效）
+
+### 核心原则
+
+**每个生成的项目必须在视觉上有明显区别**，避免所有项目看起来千篇一律。这是业务需求——客户会注意到项目间的相似性。
+
+### 风格预设库
+
+所有可用风格定义在 `workflow/ui-style-library.json`，共 10+ 种预设：
+
+| 预设 ID | 名称 | 色系 | 适用场景 |
+|---------|------|------|---------|
+| aurora-blue | 极光蓝 | 蓝色系 | 管理系统、SaaS |
+| sunset-orange | 日落橙 | 橙色系 | 教育、培训、社区 |
+| forest-green | 森林绿 | 绿色系 | 医疗、环保、农业 |
+| royal-purple | 皇家紫 | 紫色系 | 奢侈品、设计、创意 |
+| ocean-teal | 海洋青 | 青色系 | 金融、银行、保险 |
+| cherry-red | 樱桃红 | 红色系 | 餐饮、电商、娱乐 |
+| midnight-dark | 午夜黑 | 深色系 | 开发者工具、技术平台 |
+| blossom-pink | 樱花粉 | 粉色系 | 女性社区、健康、社交 |
+| slate-corporate | 石墨灰 | 灰色系 | 企业后台、ERP、OA |
+| golden-amber | 琥珀金 | 金色系 | 酒店、旅游、高端服务 |
+| lime-fresh | 青柠绿 | 黄绿色系 | 年轻化产品、运动、社交 |
+
+### 风格选择规则
+
+**Stage 1（Planner）** 必须在 AskUserQuestion 中呈现风格选择：
+
+1. 从 `ui-style-library.json` 读取所有预设
+2. 以 AskUserQuestion 选项形式呈现（最多 4 个选项 + 推荐标记）
+3. 推荐逻辑：根据项目类型自动推荐最匹配的风格（参考 profiles 的 category 字段）
+4. 用户选定后，将 `style_profile` 写入 `requirements.json`
+
+### 风格强制执行规则
+
+**Stage 3（Builder）** 生成 UI 代码时必须：
+
+1. 读取 `requirements.json` 中的 `style_profile` 字段
+2. 从 `ui-style-library.json` 加载对应的完整 tokens（colors、typography、components、layout）
+3. **所有 CSS 变量 / 主题配置必须严格使用 tokens 中的值**，不得自行编造颜色或字体
+4. 组件样式（按钮圆角、卡片阴影、表格样式等）必须匹配 tokens 中的 `components` 配置
+5. 布局参数（侧边栏宽度、内边距、间距）必须匹配 `layout` 配置
+
+### QA 检查规则
+
+**Stage 4（QA）** 必须增加一个检查项：
+
+- `ui_consistency`：检查生成的 UI 代码是否严格遵循 `style_profile` 的 tokens
+- 发现不一致时 severity 不得低于 major
+
+### 禁止行为
+
+- 禁止忽略 `style_profile` 使用默认样式
+- 禁止在 tokens 之外自行定义颜色值
+- 禁止不同项目使用相同风格（除非用户明确指定）
+
 ## 小白模式（全局生效）
 
 无论当前是哪个角色，以下规则始终生效：

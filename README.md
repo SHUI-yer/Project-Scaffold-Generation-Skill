@@ -111,6 +111,28 @@ Stage 6: 收尾
 | Layer 4 | GUI / 前端界面 | 界面可显示，导航正常 |
 | Layer 5 | 脚本 + 文档 + 测试 | 环境检测通过，文档完整 |
 
+### UI 风格多样性（业务关键）
+
+每个生成的项目从 **11 种风格预设** 中选择一种，确保项目间视觉有明显区别：
+
+| 预设 | 名称 | 色系 | 适用场景 |
+|------|------|------|---------|
+| aurora-blue | 极光蓝 | 蓝色 | 管理系统、SaaS |
+| sunset-orange | 日落橙 | 橙色 | 教育、培训、社区 |
+| forest-green | 森林绿 | 绿色 | 医疗、环保、农业 |
+| royal-purple | 皇家紫 | 紫色 | 奢侈品、设计、创意 |
+| ocean-teal | 海洋青 | 青色 | 金融、银行、保险 |
+| cherry-red | 樱桃红 | 红色 | 餐饮、电商、娱乐 |
+| midnight-dark | 午夜黑 | 深色 | 开发者工具、技术平台 |
+| blossom-pink | 樱花粉 | 粉色 | 女性社区、健康、社交 |
+| slate-corporate | 石墨灰 | 灰色 | 企业后台、ERP、OA |
+| golden-amber | 琥珀金 | 金色 | 酒店、旅游、高端服务 |
+| lime-fresh | 青柠绿 | 黄绿色 | 年轻化产品、运动、社交 |
+
+每种预设包含完整的 **颜色 token、字体方案、组件样式、布局参数**，Builder 严格按 token 生成 UI，QA 会检查一致性。
+
+详见 [workflow/ui-style-library.json](workflow/ui-style-library.json)。
+
 ## 7 个精简版 Skill
 
 ```text
@@ -159,6 +181,7 @@ Project-build-SKILL/
 │  │  ├─ quality-report.schema.json   <- QA 输出格式
 │  │  ├─ fix-report.schema.json       <- Specialist 输出格式
 │  │  └─ defense-report.schema.json   <- 答辩报告模板 schema
+│  ├─ ui-style-library.json           <- UI 风格预设库（11种差异化风格）
 │  └─ templates/                      <- 交付文档模板
 │     ├─ defense-report.md            <- 答辩准备报告模板（含15个常见问题）
 │     ├─ packaging-guide.md           <- 项目打包指南模板

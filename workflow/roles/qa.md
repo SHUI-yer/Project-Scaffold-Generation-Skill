@@ -33,7 +33,7 @@
 
 | 类别 | 检查项 |
 |------|--------|
-| functionality | 功能模块完整性、CRUD 覆盖度 |
+| functionality | 功能模块完整性、CRUD 覆盖度、**项目范围一致性**（见下方说明） |
 | runtime | **首次运行可执行性**（见下方详细清单，每项必查，不通过则 critical） |
 | security | 安全防护是否匹配 security_level（鉴权/校验/限流/审计）；**认证失败必须返回 401 + JSON 错误响应（不得返回 403 或 HTML）**；未授权访问返回 403 |
 | ui_consistency | CSS 变量、暗黑模式、主题一致性 |
@@ -41,6 +41,20 @@
 | naming | 命名规范一致性、RESTful API 规范 |
 | engineering | 构建脚本可用、环境变量配置、.gitignore 完整、**IDE 兼容性**（见下方详细清单） |
 | documentation | README、配置说明、交付文档完整性、答辩报告完整性 |
+
+### functionality 项目范围一致性检查
+
+**生成前必须读取 requirements.json 的 `project_type` 字段，检查生成的代码是否匹配：**
+
+| project_type | 应该有 | 不应该有 | 检查方法 |
+|-------------|--------|---------|---------|
+| `fullstack` | 后端代码 + 前端代码 + 启动脚本（前后端都启动） | 无 | 检查 apps/backend/ 和 apps/frontend/ 都存在 |
+| `backend-only` | 后端代码 + 仅后端启动脚本 | **不应有** apps/frontend/ 目录、前端 .vue/.tsx/.ts 页面文件 | 检查无前端目录和文件 |
+| `frontend-only` | 前端代码 + 仅前端启动脚本 | **不应有** apps/backend/ 目录、Java/Python/Go 后端文件 | 检查无后端目录和文件 |
+| `cli` | 命令行工具代码 | 不应有 Web 界面、Controller、前端页面 | 检查无 Web 相关文件 |
+| `library` | 库代码 + 示例 + README | 不应有完整应用代码 | 检查无 Controller/页面 |
+
+**违规时 severity = critical，必须在 issues_for_fix 中报告。**
 
 ### runtime 类别详细检查清单（首次运行可执行性）
 
@@ -226,36 +240,53 @@
 
 #### React 检查项
 
-| 检查项 | 通过标准 |
-|--------|---------|
-| package.json 脚本完整 | scripts.dev 和 scripts.build 均存在 |
-| vite.config.ts 正确 | plugins: [react()] 存在 |
-| 入口文件完整 | ReactDOM.createRoot + <App /> 渲染存在 |
-| 环境变量前缀正确 | 所有自定义环境变量以 VITE_ 开头 |
-| 路由完整（如有） | BrowserRouter/Routes 包裹 App，每个路由指向实际组件 |
-| API 请求规范 | base URL 从环境变量读取，不得硬编码 localhost |
+| 检查项 | 通过标准 | severity |
+|--------|---------|----------|
+| package.json 脚本完整 | scripts.dev/build/preview 均存在 | critical |
+| vite.config.ts 正确 | plugins: [react()] 存在，server.proxy 已配置 | critical |
+| 入口文件完整 | ReactDOM.createRoot + <App /> 渲染存在 | critical |
+| 环境变量前缀正确 | 所有自定义环境变量以 VITE_ 开头 | critical |
+| TypeScript 类型完整 | types/ 目录存在，API 响应有类型定义，组件 Props 有类型，无 `any` | major |
+| API 拦截器完整 | 请求拦截器设置 Authorization header，响应拦截器处理 401 跳转登录 | critical |
+| 路由守卫完整 | 受保护路由检查 Token，无 Token 跳转 /login，有 Token 访问 /login 跳首页 | critical |
+| 状态管理完整 | Store 存在，Token 持久化到 localStorage，提供 login/logout 方法 | major |
+| CRUD 页面完整 | 每个页面包含：表格+分页+搜索+新增编辑弹窗+删除确认+空状态+错误处理 | critical |
+| 登录页完整 | 渐变背景+表单验证+Enter 键提交+测试账号显示 | major |
+| 布局页完整 | 侧边栏菜单+顶部导航（用户名+退出）+Outlet 内容区 | major |
+| 样式方案一致 | 全项目使用同一样式方案（CSS Modules/Ant Design/Tailwind），不混用 | major |
 
 #### Vue 3 检查项
 
-| 检查项 | 通过标准 |
-|--------|---------|
-| package.json 脚本完整 | scripts.dev 和 scripts.build 均存在 |
-| vite.config.ts 正确 | plugins: [vue()] 存在 |
-| 入口文件完整 | createApp(App).use(router).mount('#app') 存在 |
-| 路由完整 | 路由配置数组存在，每个 component 指向实际 .vue 文件 |
-| 环境变量前缀正确 | 以 VITE_ 开头 |
+| 检查项 | 通过标准 | severity |
+|--------|---------|----------|
+| package.json 脚本完整 | scripts.dev/build/preview 均存在 | critical |
+| 依赖完整 | vue、vue-router、pinia、element-plus（或同类 UI 库）、axios 均在 dependencies | critical |
+| vite.config.ts 正确 | plugins: [vue()] 存在，server.proxy 已配置 | critical |
+| 入口文件完整 | createApp(App).use(createPinia()).use(router).use(ElementPlus).mount('#app') | critical |
+| TypeScript 类型完整 | types/ 目录存在，API 响应有类型定义，禁止 `any` | major |
+| API 拦截器完整 | axios 实例+请求拦截器（Bearer Token）+响应拦截器（401 跳转+错误提示） | critical |
+| 路由守卫完整 | beforeEach 全局守卫存在，检查 Token，requiresAuth 标注正确 | critical |
+| Pinia Store 完整 | Composition API 风格，Token 持久化 localStorage，login/logout 方法 | major |
+| CRUD 页面完整 | el-table+v-loading+el-pagination+搜索+el-dialog 表单+el-popconfirm 删除+空状态+try/catch | critical |
+| 登录页完整 | 渐变背景+el-form 表单验证+Enter 键+测试账号 | major |
+| Layout 完整 | el-menu 侧边栏（可折叠）+顶部导航（用户名+退出）+router-view | major |
+| 样式规范 | CSS 变量定义主题色，`<style scoped>` 隔离，全局样式在 styles/ 目录 | major |
 
 #### Svelte / SvelteKit 检查项
 
-| 检查项 | 通过标准 |
-|--------|---------|
-| package.json 脚本完整 | scripts.dev/build/preview 均存在 |
-| 依赖完整 | svelte 存在；SvelteKit：@sveltejs/kit、adapter-auto 存在 |
-| vite.config.js 正确 | svelte() 插件存在 |
-| SvelteKit 配置 | svelte.config.js 中 adapter 导入和配置存在 |
-| 入口文件完整 | Svelte: new App({target}) 存在；SvelteKit: +layout.svelte/+page.svelte 存在 |
-| 路由完整（SvelteKit） | src/routes/ 目录结构正确，+page.svelte 存在 |
-| 环境变量规范 | 使用 $env/static/private，不得硬编码 API 地址 |
+| 检查项 | 通过标准 | severity |
+|--------|---------|----------|
+| package.json 脚本完整 | scripts.dev/build/preview 均存在 | critical |
+| 依赖完整 | svelte 存在；SvelteKit：@sveltejs/kit、adapter-auto 存在 | critical |
+| vite.config.ts 正确 | svelte() 插件存在，server.proxy 已配置 | critical |
+| SvelteKit 配置 | svelte.config.js 中 adapter 导入和配置存在 | critical |
+| API 层完整 | lib/api/client.ts 存在，fetch 封装+拦截器+401 处理 | critical |
+| 路由守卫完整 | +layout.ts 或 +layout.server.ts 检查 Token，无认证跳转 /login | critical |
+| Store 完整 | writable() 定义状态，Token 持久化 localStorage，login/logout 函数 | major |
+| CRUD 页面完整 | 表格（{#each}）+分页+搜索+弹窗表单（{#if}）+删除确认+加载状态+空状态 | critical |
+| 登录页完整 | 渐变背景+表单验证+Enter 键+测试账号 | major |
+| Layout 完整 | 侧边栏菜单+顶部导航+`<slot />` 内容区 | major |
+| 环境变量规范 | PUBLIC_ 前缀用于客户端变量，不得硬编码 API 地址 | critical |
 
 #### Python Flask 检查项
 

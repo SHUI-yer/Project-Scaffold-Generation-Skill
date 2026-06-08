@@ -1,0 +1,783 @@
+{
+  "version": "1.0",
+  "description": "大厂设计模式知识库 — Agent 构建 UI 时的设计参考标准",
+  "usage": "Agent 在不确定如何设计 UI 时，根据项目类型匹配以下设计模式，模仿其实现",
+  "design_systems": {
+    "google_material_design_3": {
+      "name": "Google Material Design 3 (Material You)",
+      "version": "Material Design 3 (2023+)",
+      "reference_url": "https://m3.material.io",
+      "overview": "Google 最新的设计系统，强调个性化（Dynamic Color）、大圆角、大胆的排版层次。适用于 Android、Web、Flutter 等全平台。",
+      "color_system": {
+        "scheme": "Dynamic Color（基于壁纸/品牌色自动生成调色板）",
+        "roles": {
+          "primary": "主色调 — 用于关键交互元素（按钮、FAB）",
+          "on_primary": "主色调上的文字/图标颜色",
+          "primary_container": "主色调容器（浅色填充区域）",
+          "on_primary_container": "容器上的文字",
+          "secondary": "次要色调 — 用于次级操作",
+          "tertiary": "第三色调 — 用于强调和区分",
+          "surface": "表面颜色（卡片、Sheet 背景）",
+          "on_surface": "表面上的文字",
+          "outline": "边框和分隔线",
+          "error": "错误状态（#B3261E）"
+        },
+        "token_naming": "md.sys.color.{role}",
+        "dark_mode": "所有 role 都有 dark variant，通过 surface brightness 自动适配"
+      },
+      "typography": {
+        "scale": "5 个层级：Display、Headline、Title、Body、Label",
+        "sizes": {
+          "display_large": "57sp / 4.5625rem",
+          "display_medium": "45sp / 3.5625rem",
+          "display_small": "36sp / 2.875rem",
+          "headline_large": "32sp / 2.5rem",
+          "headline_medium": "28sp / 2.25rem",
+          "headline_small": "24sp / 1.75rem",
+          "title_large": "22sp / 1.375rem",
+          "title_medium": "16sp / 1rem — Medium weight",
+          "title_small": "14sp / 0.875rem — Medium weight",
+          "body_large": "16sp / 1rem",
+          "body_medium": "14sp / 0.875rem",
+          "body_small": "12sp / 0.75rem",
+          "label_large": "14sp / 0.875rem — Medium weight",
+          "label_medium": "12sp / 0.75rem — Medium weight",
+          "label_small": "11sp / 0.6875rem — Medium weight"
+        },
+        "font_family": {
+          "android": "Roboto",
+          "web": "Google Sans / Roboto",
+          "fallback": "system-ui, sans-serif"
+        },
+        "line_height_multiplier": 1.4
+      },
+      "elevation": {
+        "levels": [0, 1, 2, 3, 4, 5],
+        "style": "Tonal elevation（使用 surface tint 色调叠加，而非阴影）",
+        "level_0": "Flat surface, no shadow",
+        "level_1": "4dp — Cards, Bottom sheets",
+        "level_2": "8dp — FAB, Navigation bar",
+        "level_3": "12dp — Menu, Side sheet",
+        "level_4": "16dp — App bar, Bottom app bar",
+        "level_5": "24dp — Nav drawer, Dialog"
+      },
+      "shape": {
+        "corner_sizes": {
+          "none": "0dp",
+          "extra_small": "4dp — Chips, Badges",
+          "small": "8dp — Buttons, Cards (compressed)",
+          "medium": "12dp — Cards, Sheets",
+          "large": "16dp — Dialog, Search bar",
+          "extra_large": "28dp — FAB",
+          "full": "50% — Avatars, Pills"
+        },
+        "principle": "All shapes are rounded, no sharp corners. Use continuous corners for smooth transitions."
+      },
+      "components": {
+        "buttons": {
+          "filled": "Primary action — Rounded (20dp), solid fill",
+          "filled_tonal": "Secondary action — Lighter tonal fill",
+          "outlined": "Tertiary action — Border only, no fill",
+          "text": "Low-emphasis action — No background, text only"
+        },
+        "cards": {
+          "elevated": "Shadow/tonal lift (level 1)",
+          "filled": "Surface color fill, no shadow",
+          "outlined": "1dp outline border"
+        },
+        "navigation": {
+          "top_app_bar": "48dp height, large/top variant",
+          "bottom_navigation": "3 items max, icons + labels",
+          "navigation_rail": "Side navigation for tablet/desktop",
+          "navigation_drawer": "Full side panel for desktop"
+        },
+        "input": {
+          "text_field": "Outlined or filled variant",
+          "filled_text_field": "Surface container fill with bottom border on focus"
+        },
+        "dialog": {
+          "basic": "Title + content + actions",
+          "full_screen": "Immersion mode"
+        },
+        "fab": {
+          "small": "40dp",
+          "medium": "56dp",
+          "large": "96dp",
+          "extended": "Auto width + label"
+        }
+      },
+      "motion": {
+        "duration_short": "50ms — Micro-interaction (toggle)",
+        "duration_medium1": "150ms — Button press, ripple",
+        "duration_medium2": "250ms — Card expand",
+        "duration_long1": "300ms — Sheet slide",
+        "duration_long2": "400ms — Page transition",
+        "easing": "emphasized (ease-in-out) / emphasized-decelerate / emphasized-accelerate",
+        "principle": "Enter: decelerate, Exit: accelerate, Move: linear"
+      },
+      "layout": {
+        "grid": "12-column grid (web), 4-column (mobile)",
+        "gutter": "16dp (mobile), 24dp (tablet), 24dp (desktop)",
+        "margin": "16dp (mobile), 24dp (tablet), auto center (desktop)",
+        "breakpoints": {
+          "compact": "< 600dp",
+          "medium": "600-840dp",
+          "expanded": "> 840dp"
+        }
+      },
+      "accessibility": {
+        "min_touch_target": "48dp x 48dp",
+        "contrast_ratio": "Normal: 4.5:1, Large: 3:1",
+        "focus_indicators": "2dp outline with primary color"
+      }
+    },
+    "apple_human_interface": {
+      "name": "Apple Human Interface Guidelines (HIG)",
+      "version": "iOS 17+ / macOS 14+ (2023+)",
+      "reference_url": "https://developer.apple.com/design/human-interface-guidelines",
+      "overview": "Apple 的全平台设计规范，强调清晰（Clarity）、遵从（Deference）、深度（Depth）。适用于 iOS、macOS、watchOS、visionOS。",
+      "color_system": {
+        "scheme": "语义化颜色 + 自适应模式",
+        "semantic_colors": {
+          "label": "主要文字（#000000 light / #FFFFFF dark）",
+          "secondary_label": "次要文字（#3C3C43 60% opacity）",
+          "tertiary_label": "第三级文字（#3C3C43 30% opacity）",
+          "system_blue": "#007AFF — 默认 Tint Color",
+          "system_green": "#34C759 — 成功状态",
+          "system_red": "#FF3B30 — 错误/破坏性操作",
+          "system_orange": "#FF9500 — 警告",
+          "system_yellow": "#FFCC00 — 注意",
+          "system_teal": "#5AC8FA — 信息",
+          "system_purple": "#AF52DE",
+          "system_pink": "#FF2D55",
+          "system_gray": "#8E8E93",
+          "separator": "#3C3C43 29% opacity",
+          "system_background": "#FFFFFF / #000000",
+          "secondary_system_background": "#F2F2F7 / #1C1C1E",
+          "tertiary_system_background": "#FFFFFF / #2C2C2E"
+        },
+        "dark_mode": "Full dark mode support with semantic colors",
+        "vibrancy": "Materials (ultraThin / thin / regular / thick / ultraThick) for blur effects"
+      },
+      "typography": {
+        "scale": "Dynamic Type — 7 accessibility sizes per style",
+        "styles": {
+          "large_title": "34pt — SF Pro Display",
+          "title_1": "28pt — SF Pro Display",
+          "title_2": "22pt — SF Pro Display",
+          "title_3": "20pt — SF Pro Display",
+          "headline": "17pt Semibold — SF Pro Text",
+          "body": "17pt Regular — SF Pro Text",
+          "callout": "16pt Regular",
+          "subheadline": "15pt Regular",
+          "footnote": "13pt Regular",
+          "caption_1": "12pt Regular",
+          "caption_2": "11pt Regular"
+        },
+        "font_family": {
+          "ios": "SF Pro / SF Pro Rounded",
+          "macos": "SF Pro / SF Mono",
+          "web": "system-ui, -apple-system, BlinkMacSystemFont",
+          "fallback": "Helvetica Neue, Arial, sans-serif"
+        },
+        "weight_scale": {
+          "ultra_light": "100",
+          "thin": "200",
+          "light": "300",
+          "regular": "400",
+          "medium": "500",
+          "semibold": "600",
+          "bold": "700",
+          "heavy": "800",
+          "black": "900"
+        }
+      },
+      "elevation": {
+        "style": "Material-based depth (blur + transparency, not shadow)",
+        "materials": {
+          "ultraThin": "最小模糊，最透明",
+          "thin": "轻微模糊",
+          "regular": "标准模糊，适合作为弹出内容背景",
+          "thick": "强模糊",
+          "ultraThick": "最强模糊，最大深度"
+        },
+        "shadow": "iOS shadow 非常克制：y偏移 0-8pt, blur 0-24pt, 黑色 0-12% opacity",
+        "principle": "Depth 通过 Material blur 和层叠实现，不依赖大范围阴影"
+      },
+      "shape": {
+        "corner_radius": {
+          "small": "8pt — Buttons, Badges",
+          "medium": "12pt — Cards, Cells",
+          "large": "16pt — Sheets, Modals",
+          "extra_large": "20pt — Full-screen cards"
+        },
+        "continuous_curve": "iOS 15+ 使用 Squircle 连续曲率（而非简单圆角）",
+        "capsule": "Pill shape for tags, badges, segment controls"
+      },
+      "components": {
+        "navigation": {
+          "tab_bar": "底部 5 个 Tab 最多，图标 + 文字",
+          "navigation_bar": "Large title / Inline / Pagination 等模式",
+          "sidebar": "macOS 侧边栏，支持 collapsible sections"
+        },
+        "lists": {
+          "inset_grouped": "圆角分组列表（iOS 设置页经典样式）",
+          "inset_grouped_full_width": "全宽圆角",
+          "plain": "无圆角标准列表",
+          "grouped": "分段列表"
+        },
+        "controls": {
+          "toggle": "UISwitch — 椭圆形开关",
+          "segmented_control": "UISegmentedControl — 分段选择器",
+          "stepper": "UIStepper — 加减控制",
+          "slider": "UISlider — 滑动条",
+          "progress": "UIProgressView — 进度条"
+        },
+        "sheets": {
+          "bottom_sheet": "半屏弹出，支持 3 种 detent（小/中/大）",
+          "context_menu": "长按弹出菜单（3D Touch 预览）",
+          "action_sheet": "底部操作列表"
+        },
+        "alerts": {
+          "alert": "居中弹出，标题 + 内容 + 按钮（最多 2 个文字按钮）",
+          "action_sheet": "底部弹出操作列表"
+        },
+        "status_bar": "44pt 高度（iPhone 有刘海区域 59pt）"
+      },
+      "motion": {
+        "animation_types": {
+          "spring": "iOS 默认动画类型 — 使用 UISpringTimingParameters",
+          "transition": "视图切换动画 — push/pop/present/dismiss",
+          "matched": "Magic Move 效果 — UI 元素跨页面平滑过渡"
+        },
+        "duration": {
+          "quick": "0.2s — 微交互",
+          "normal": "0.35s — 页面过渡",
+          "slow": "0.5s — 复杂动画"
+        },
+        "timing_curve": "cubic-bezier(0.25, 0.1, 0.25, 1.0) — 默认 ease-in-out"
+      },
+      "layout": {
+        "safe_area": "所有内容必须在 Safe Area 内（避开刘海/圆角/Home Indicator）",
+        "minimum_tap_target": "44pt x 44pt",
+        "grid": "8pt base grid system",
+        "spacing": {
+          "system": "4pt / 8pt / 12pt / 16pt / 20pt / 24pt / 32pt / 40pt / 48pt / 64pt"
+        }
+      },
+      "accessibility": {
+        "dynamic_type": "支持 Dynamic Type 字体缩放（最小 AA 级别）",
+        "voice_over": "所有交互元素必须有 accessibilityLabel",
+        "min_touch_target": "44pt x 44pt",
+        "contrast_ratio": "WCAG AA: 4.5:1"
+      }
+    },
+    "x_twitter_design": {
+      "name": "X (Twitter) Design System",
+      "version": "X Design System (2023+)",
+      "reference_url": "https://github.com/twitter-fabric (archived) / https://x.com",
+      "overview": "X/Twitter 的设计系统，强调信息密度、即时反馈、暗色优先。适用于社交/内容/Feed 类产品。",
+      "color_system": {
+        "scheme": "暗色优先 + 蓝色品牌色",
+        "palette": {
+          "brand_blue": "#1D9BF0 — 核心品牌色（点赞、链接、按钮）",
+          "system_success": "#00BA7C — 转发/成功",
+          "system_error": "#F4212E — 删除/错误",
+          "system_warning": "#FFD400",
+          "text_primary": "#E7E9EA — 主要文字（暗色模式）",
+          "text_secondary": "#71767B — 次要文字（时间、计数）",
+          "text_tertiary": "#536471 — 提示文字",
+          "border": "#2F3336 — 边框和分隔线",
+          "background_main": "#000000 — 主背景",
+          "background_elevated": "#16181C — 弹出层/导航栏背景",
+          "background_hover": "#080808 — Hover 状态",
+          "interactive_hover": "#1D9BF0 20% opacity — Hover 叠加",
+          "overlay": "rgba(91, 112, 131, 0.4) — Modal 背景"
+        },
+        "light_mode": {
+          "text_primary": "#0F1419",
+          "text_secondary": "#536471",
+          "background_main": "#FFFFFF",
+          "background_elevated": "#F7F9F9",
+          "border": "#EFF3F4"
+        },
+        "themes": ["Default Dark", "Dim", "Lights Out (Pure Black)", "Default Light", "Soft White"]
+      },
+      "typography": {
+        "font_family": {
+          "primary": "Chirp (proprietary)",
+          "web_fallback": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+          "monospace": "SF Mono, 'Roboto Mono', monospace"
+        },
+        "styles": {
+          "headline_1": "23px Bold — 推文详情页标题",
+          "headline_2": "19px Bold — 次级标题",
+          "title": "15px Bold — 卡片标题、用户名",
+          "body": "15px Regular — 推文正文（核心阅读尺寸）",
+          "body_large": "17px Regular — 推文详情页正文",
+          "callout": "14px Regular — 回复、子文本",
+          "subhead": "13px Regular — 时间戳、计数",
+          "caption": "12px Regular — 最小文字",
+          "tag": "12px Bold — 话题标签"
+        },
+        "line_height": {
+          "short": "20px — 适合计数器、小字",
+          "regular": "24px — 标准行高",
+          "relaxed": "28px — 长文阅读"
+        },
+        "character_limit": "280 characters — tweet"
+      },
+      "elevation": {
+        "style": "Minimal elevation, borders preferred over shadows",
+        "shadow": "None — 使用 border-bottom 或 background-color 差异区分层级",
+        "layer_system": {
+          "layer_0": "#000000 — Main timeline",
+          "layer_1": "#16181C — Navigation, Side panels",
+          "layer_2": "#1D1F23 — Bottom sheets, Dialogs",
+          "layer_3": "#282A2E — Popovers"
+        },
+        "principle": "Use color contrast instead of shadow for elevation. The app is flat."
+      },
+      "shape": {
+        "border_radius": {
+          "button": "9999px — All buttons are fully rounded (pill shape)",
+          "card": "16px — Tweet cards, containers",
+          "avatar": "50% — Always circular",
+          "input": "4px — Text inputs (subtle rounding)",
+          "badge": "9999px — Notification badges",
+          "sheet": "16px top-left/right — Bottom sheets"
+        },
+        "principle": "Extreme rounding for interactive elements (pill), subtle rounding for content containers"
+      },
+      "components": {
+        "tweet_card": {
+          "structure": "Avatar | Content (Name + Handle + Time + Text + Media + Actions)",
+          "actions": "Reply (bubble) | Retweet (cycle) | Like (heart) | Views (bar chart) | Share (up arrow)",
+          "hover": "Subtle background on card hover (#080808)",
+          "border": "1px bottom border on timeline (#2F3336)"
+        },
+        "navigation": {
+          "sidebar": "Fixed left — Logo + Nav items (icons + labels) + Tweet button",
+          "sidebar_width": "275px (desktop)",
+          "trend_panel": "Fixed right — Search + Trends + Who to follow",
+          "panel_width": "350px (desktop)",
+          "mobile": "Bottom tab bar — Home / Search / Notifications / DM"
+        },
+        "input": {
+          "tweet_box": "Expanding textarea + media buttons + character counter + Tweet button",
+          "search": "Full-width rounded search bar with magnifying glass icon",
+          "character_counter": "Circular progress, turns red at 20 remaining, blocks at 0"
+        },
+        "buttons": {
+          "primary": "Filled #1D9BF0, fully rounded, white text",
+          "outline": "Border #536471, fully rounded",
+          "danger": "Filled #F4212E — destructive actions (Delete)",
+          "text": "No background, brand_blue text — Follow, More"
+        },
+        "feed": {
+          "infinite_scroll": "Continuous feed with intersection observer for lazy loading",
+          "skeleton": "Pulse animation placeholders while loading",
+          "pull_to_refresh": "On mobile, pull down to refresh timeline"
+        },
+        "modals": {
+          "compose_tweet": "Centered modal, 600px width",
+          "confirm_dialog": "Compact centered dialog",
+          "bottom_sheet": "Mobile bottom sheet with drag handle"
+        },
+        "toast": "Bottom-center snackbar, auto-dismiss 3-5 seconds"
+      },
+      "motion": {
+        "animations": {
+          "like": "Heart scale + particle burst on like (0.3s spring)",
+          "retweet": "Icon color change + slight rotation",
+          "compose_expand": "Textarea height animation (0.2s ease)",
+          "skeleton_pulse": "Opacity 0.4-1.0 loop, 1.5s duration",
+          "infinite_scroll_load": "Fade-in + slide-up for new tweets (0.3s)"
+        },
+        "duration": {
+          "micro": "150ms — Hover, focus",
+          "short": "200ms — Button press, toggle",
+          "medium": "300ms — Panel slide, modal open",
+          "long": "500ms — Page transition"
+        },
+        "easing": "cubic-bezier(0.25, 0.1, 0.25, 1.0)",
+        "principle": "Fast, snappy, responsive. No slow, bouncy animations."
+      },
+      "layout": {
+        "desktop": {
+          "sidebar_left": "275px fixed",
+          "main_feed": "Flexible, max 600px",
+          "panel_right": "350px fixed"
+        },
+        "mobile": {
+          "full_width": "100% with 16px horizontal padding",
+          "bottom_nav": "60px height"
+        },
+        "grid": "No formal grid — content flows in single column with fixed-width sidebars",
+        "breakpoint": {
+          "mobile": "< 500px",
+          "tablet": "500-1000px (no side panel)",
+          "desktop": "> 1000px (full 3-column layout)"
+        }
+      },
+      "interaction_patterns": {
+        "infinite_scroll": "Load more content automatically when scrolling near bottom",
+        "pull_to_refresh": "Pull down to refresh (mobile)",
+        "long_press": "Context menu on mobile (tweet actions)",
+        "double_click_like": "Double tap on tweet media to like",
+        "swipe_actions": "Swipe left for Reply, Swipe right for Retweet (mobile)",
+        "inline_reply": "Expand reply box directly under a tweet without page navigation"
+      },
+      "accessibility": {
+        "min_touch_target": "44dp x 44dp",
+        "contrast_ratio": "4.5:1 minimum",
+        "screen_reader": "All actions have descriptive labels",
+        "keyboard_navigation": "Tab order follows visual layout"
+      }
+    }
+  },
+  "industry_patterns": {
+    "saas_dashboard": {
+      "description": "企业级 SaaS 管理后台（如 Salesforce, Notion, Linear）",
+      "key_elements": [
+        "固定侧边栏（可折叠） + 顶栏（搜索 + 通知 + 头像）",
+        "数据表格为核心交互（排序、筛选、分页）",
+        "Dashboard 仪表盘（图表 + 指标卡片）",
+        "表单页（新建/编辑资源）",
+        "详情页（资源详情 + 关联数据）"
+      ],
+      "design_principles": [
+        "信息密度优先 — 在一屏内展示尽可能多的有效信息",
+        "一致性 — 相同操作在不同页面有相同交互方式",
+        "效率 — 支持键盘快捷键、批量操作",
+        "渐进披露 — 高级功能折叠，不干扰主要流程"
+      ],
+      "color_scheme": "中性色为主 + 一个品牌强调色",
+      "typography": "14-16px body text, 12-14px secondary text, 20-24px headings",
+      "layout": "Fixed sidebar (240px) + Fluid content area",
+      "refer_to": ["Google Material Design 3", "Ant Design", "Tailwind UI Dashboard"]
+    },
+    "ecommerce": {
+      "description": "电商/在线商城（如 Shopify, Amazon, 小红书）",
+      "key_elements": [
+        "产品网格展示（图片优先，标题+价格叠加）",
+        "产品详情页（大图轮播 + 规格选择 + 加购按钮）",
+        "购物车（侧滑/页面）",
+        "筛选栏（价格/品牌/评分/分类）",
+        "结算流程（多步骤表单）"
+      ],
+      "design_principles": [
+        "视觉驱动 — 产品图片是核心，UI 不应抢视觉焦点",
+        "信任感 — 安全支付标识、评价系统、退换政策清晰可见",
+        "行动导向 — '加入购物车'和'立即购买'按钮必须醒目",
+        "紧迫感 — 库存提示、限时折扣、倒计时"
+      ],
+      "color_scheme": "白色/浅色背景 + 品牌色 CTA + 红色/橙色促销色",
+      "typography": "价格加粗放大，标题中等粗细，描述文字轻量",
+      "layout": "Grid (3-4 columns on desktop, 2 on mobile)",
+      "refer_to": ["Shopify Polaris", "Apple Store", "Dribbble ecommerce"]
+    },
+    "social_platform": {
+      "description": "社交/社区平台（如 Twitter/X, Reddit, Discord）",
+      "key_elements": [
+        "信息流（Feed）— 卡片式内容流",
+        "内容创建（富文本/Markdown 编辑器）",
+        "互动按钮（点赞/转发/评论/分享）",
+        "用户主页（头像+简介+内容列表）",
+        "通知中心（@提及/点赞/关注）",
+        "私信/聊天"
+      ],
+      "design_principles": [
+        "内容为王 — UI 框架极简，让内容本身说话",
+        "即时反馈 — 点赞动画、实时通知、乐观更新",
+        "社交证明 — 粉丝数、互动数、认证标记",
+        "发现机制 — 推荐、趋势、搜索"
+      ],
+      "color_scheme": "深色模式优先 + 品牌强调色",
+      "typography": "15px body (最佳阅读尺寸), Bold 用于用户名/标题",
+      "layout": "3-column (sidebar + feed + aside panel)",
+      "refer_to": ["X/Twitter Design", "Discord", "Reddit"]
+    },
+    "content_management": {
+      "description": "内容管理/CMS（如 WordPress, Notion, Strapi）",
+      "key_elements": [
+        "树状结构导航（文件夹/分类）",
+        "富文本编辑器（所见即所得）",
+        "内容列表（表格/卡片双视图）",
+        "预览模式（编辑预览 + 发布预览）",
+        "版本历史 + 协作"
+      ],
+      "design_principles": [
+        "内容优先 — 编辑器区域最大化",
+        "结构清晰 — 层级关系一目了然",
+        "操作可达 — 常用操作不超过 2 次点击",
+        "状态可见 — 草稿/已发布/归档 状态明确"
+      ],
+      "color_scheme": "中性浅色背景 + 语义状态色",
+      "layout": "固定侧边栏(200-280px) + 内容编辑区(弹性)",
+      "refer_to": ["Notion", "Strapi", "Contentful"]
+    },
+    "data_analytics": {
+      "description": "数据分析/BI 仪表盘（如 Grafana, Tableau, Metabase）",
+      "key_elements": [
+        "图表展示（折线图/柱状图/饼图/热力图）",
+        "KPI 指标卡片（大数字 + 趋势箭头 + 同比）",
+        "数据表格（排序/筛选/导出）",
+        "时间选择器（快捷范围 + 自定义）",
+        "仪表盘布局（可拖拽网格）",
+        "筛选器/变量面板"
+      ],
+      "design_principles": [
+        "数据清晰 — 图表颜色区分明显，避免过多颜色",
+        "概览优先 — 关键指标在第一屏可见",
+        "下钻能力 — 从概览到详情的交互路径",
+        "响应式 — 大屏投屏和笔记本都能使用"
+      ],
+      "color_scheme": "深色/浅色主题 + 多色图表调色板（区分度高）",
+      "typography": "数据字体用等宽字体，标签用 12px",
+      "layout": "Responsive grid (12-column, 可拖拽)",
+      "refer_to": ["Grafana", "Retool", "Metabase"]
+    },
+    "education_platform": {
+      "description": "教育/在线学习平台（如 Coursera, Duolingo, 学堂在线）",
+      "key_elements": [
+        "课程卡片网格（封面+标题+进度）",
+        "课程详情页（大纲+讲师+评价）",
+        "视频播放器（进度条+章节+笔记）",
+        "测验/作业组件",
+        "学习进度追踪（进度条+徽章）",
+        "讨论区/Q&A"
+      ],
+      "design_principles": [
+        "学习路径清晰 — 用户知道自己在哪、下一步做什么",
+        "激励机制 — 进度条、徽章、连续学习天数",
+        "沉浸学习 — 视频播放时最小化 UI 干扰",
+        "可访问性 — 字幕、倍速、键盘操作"
+      ],
+      "color_scheme": "友好温暖色系 + 进度/成就用绿色/金色",
+      "layout": "课程页用 2-column（列表+内容），学习页全宽",
+      "refer_to": ["Coursera", "Duolingo", "Notion"]
+    },
+    "admin_console": {
+      "description": "后台管理系统（如阿里云控制台, AWS Console）",
+      "key_elements": [
+        "多级导航（顶部+侧边二级菜单）",
+        "资源列表（表格+批量操作）",
+        "配置表单（复杂表单+JSON编辑器）",
+        "监控面板（实时数据+告警）",
+        "日志查看器（等宽字体+过滤+搜索）",
+        "权限管理（角色+策略）"
+      ],
+      "design_principles": [
+        "信息层级明确 — 一级导航 > 二级导航 > 内容区",
+        "安全感知 — 敏感操作二次确认、操作审计日志",
+        "批量效率 — 支持批量选择、批量操作",
+        "状态可见 — 资源状态用颜色编码（绿=运行、红=异常、灰=停止）"
+      ],
+      "color_scheme": "深色导航 + 浅色内容区 + 状态色编码",
+      "layout": "Fixed sidebar + Fixed header + Scrollable content",
+      "refer_to": ["Ant Design Pro", "Arco Design Pro", "AWS Console"]
+    },
+    "media_content": {
+      "description": "媒体/内容展示（如 Netflix, YouTube, Spotify）",
+      "key_elements": [
+        "横向滚动卡片列表（大封面+标题叠加）",
+        "全屏/沉浸式播放器",
+        "搜索（全屏/下拉）",
+        "推荐/个性化 Feed",
+        "分类/标签导航",
+        "暗色主题为主（降低视觉疲劳）"
+      ],
+      "design_principles": [
+        "沉浸体验 — 内容占据最大视觉空间",
+        "浏览效率 — 横向滚动快速浏览大量内容",
+        "暗色优先 — 降低屏幕亮度对内容观看的干扰",
+        "个性化 — 推荐算法驱动的内容排列"
+      ],
+      "color_scheme": "纯黑/深灰背景 + 白色文字 + 品牌强调色",
+      "typography": "大标题 Bold，正文 Regular，时间/元数据轻量",
+      "layout": "Full-width rows with horizontal scroll",
+      "refer_to": ["Netflix", "YouTube", "Spotify"]
+    }
+  },
+  "component_framework_styles": {
+    "description": "不同 UI 组件库/框架的设计风格差异，Agent 需根据项目选择的组件库调整实现细节",
+    "element_plus": {
+      "name": "Element Plus (Vue 3)",
+      "style": "经典企业级 — 中规中矩，信息密度高",
+      "color_primary": "#409EFF (默认蓝) — 可通过 CSS 变量覆盖",
+      "border_radius": "4px (small), 8px (large)",
+      "spacing": "紧凑型 — 适合管理后台",
+      "typography": "14px body, 12px small, 16px title",
+      "best_for": ["管理后台", "内部工具", "表单密集型页面"],
+      "avoid_for": ["C端产品", "社交/内容平台", "需要品牌感的页面"]
+    },
+    "ant_design_vue": {
+      "name": "Ant Design Vue",
+      "style": "蚂蚁设计语言 — 企业级全面解决方案",
+      "color_primary": "#1890ff (默认蓝) — 支持 12 色板",
+      "border_radius": "6px (default), 可配置",
+      "spacing": "8px 基础栅格",
+      "typography": "14px body, 20px h4, 30px h1",
+      "best_for": ["中大型管理系统", "B2B SaaS", "数据密集型"],
+      "avoid_for": ["轻量级 C 端", "创意/品牌网站"]
+    },
+    "naive_ui": {
+      "name": "Naive UI (Vue 3)",
+      "style": "现代感 — 深色主题友好，TypeScript 原生",
+      "color_primary": "#18a058 (默认绿) — 丰富的主题定制",
+      "border_radius": "3px (default) — 偏小",
+      "spacing": "适度宽松",
+      "typography": "14px body",
+      "best_for": ["开发者工具", "技术类产品", "深色主题项目"],
+      "avoid_for": ["传统企业后台", "需要大量中文文档的场景"]
+    },
+    "arco_design": {
+      "name": "Arco Design (ByteDance)",
+      "style": "字节跳动设计 — 现代、简洁、注重细节",
+      "color_primary": "#165DFF (默认蓝)",
+      "border_radius": "4px (small), 8px (medium), 12px (large)",
+      "spacing": "4px 基础栅格",
+      "typography": "14px body, 20px title",
+      "best_for": ["字节系风格项目", "现代管理后台", "国际化项目"],
+      "avoid_for": ["需要深度定制的项目"]
+    },
+    "chakra_ui": {
+      "name": "Chakra UI (React)",
+      "style": "灵活组合 — 原子化组件，无障碍优先",
+      "color_primary": "#3182CE (默认蓝) — 语义化色彩系统",
+      "border_radius": "sm(4px) / md(6px) / lg(8px) / xl(16px) / 2xl(24px) / full",
+      "spacing": "4px 基础单位 (space-1=4px, space-2=8px...)",
+      "typography": "可配置，推荐 16px body",
+      "best_for": ["React 项目", "注重无障碍", "需要高度定制"],
+      "avoid_for": ["Vue 项目", "需要开箱即用组件的场景"]
+    },
+    "shadcn_ui": {
+      "name": "shadcn/ui (React + Tailwind)",
+      "style": "极简美学 — 代码复制而非 npm 安装，完全可控",
+      "color_primary": "基于 CSS 变量的 HSL 色彩系统",
+      "border_radius": "默认 0.5rem (8px) — 通过 CSS 变量统一控制",
+      "spacing": "Tailwind 默认 spacing scale",
+      "typography": "Tailwind 排版 + Inter/system-ui 字体",
+      "best_for": ["现代 Web 应用", "设计驱动的产品", "需要完全控制样式"],
+      "avoid_for": ["需要大量预制组件的管理后台", "不使用 Tailwind 的项目"]
+    },
+    "material_ui": {
+      "name": "Material UI / MUI (React)",
+      "style": "Material Design 实现 — Google 设计语言的 React 版本",
+      "color_primary": "#1976d2 (默认蓝)",
+      "border_radius": "4px (default), 通过 theme.radius 配置",
+      "spacing": "8px 基础单位 — theme.spacing(n) = 8n px",
+      "typography": "Roboto, 14px body",
+      "best_for": ["Android 风格 Web 应用", "Google 生态集成", "Material Design 项目"],
+      "avoid_for": ["需要独特品牌感的项目", "极简风格项目"]
+    }
+  },
+  "reference_sites": {
+    "description": "Agent 遇到设计难题时的参考网站清单",
+    "design_inspiration": [
+      {
+        "name": "Dribbble",
+        "url": "https://dribbble.com",
+        "use_for": "UI 视觉灵感、配色方案、组件设计",
+        "search_tips": "搜索 '{project_type} dashboard' 或 '{style_name} ui design'"
+      },
+      {
+        "name": "Mobbin",
+        "url": "https://mobbin.com",
+        "use_for": "真实 App 的 UI 模式库，可按平台/组件类型筛选",
+        "search_tips": "搜索具体的 UI 模式如 'login page' 'navigation' 'settings'"
+      },
+      {
+        "name": "Godly",
+        "url": "https://godly.website",
+        "use_for": "高质量网站设计灵感，偏艺术/创意方向",
+        "search_tips": "按类别浏览：e-commerce, portfolio, saas"
+      },
+      {
+        "name": "Lapa.ninja",
+        "url": "https://lapa.ninja",
+        "use_for": "Landing page 和营销页面设计灵感",
+        "search_tips": "搜索行业关键词获取同类型设计"
+      },
+      {
+        "name": "Refero",
+        "url": "https://refero.design",
+        "use_for": "真实产品 UI 截图参考，可按组件筛选",
+        "search_tips": "筛选 'data table' 'modal' 'navigation' 等组件"
+      },
+      {
+        "name": "Page Flows",
+        "url": "https://pageflows.com",
+        "use_for": "用户流程录屏，学习完整交互流程",
+        "search_tips": "搜索 'onboarding' 'checkout' 'signup' 等流程"
+      },
+      {
+        "name": "UI Patterns",
+        "url": "https://www.ui-patterns.com",
+        "use_for": "常见 UI 设计模式文档和解决方案",
+        "search_tips": "搜索具体的交互问题如 'pagination' 'search' 'form'"
+      },
+      {
+        "name": "CollectUI",
+        "url": "https://collectui.com",
+        "use_for": "按组件分类的 UI 设计参考（170+ 类别）",
+        "search_tips": "搜索具体组件如 'dashboard' 'login' 'settings'"
+      }
+    ],
+    "design_systems_docs": [
+      {
+        "name": "Material Design 3",
+        "url": "https://m3.material.io",
+        "use_for": "Google 设计系统完整文档，组件规范和 Figma 资源"
+      },
+      {
+        "name": "Apple HIG",
+        "url": "https://developer.apple.com/design/human-interface-guidelines",
+        "use_for": "Apple 全平台设计规范，iOS/macOS 组件标准"
+      },
+      {
+        "name": "Ant Design",
+        "url": "https://ant.design",
+        "use_for": "蚂蚁设计系统，企业级组件规范，支持 Dark/Light"
+      },
+      {
+        "name": "Semi Design",
+        "url": "https://semi.design",
+        "use_for": "字节跳动设计系统，主题定制灵活"
+      },
+      {
+        "name": "Chakra UI",
+        "url": "https://chakra-ui.com",
+        "use_for": "React 组件库文档，无障碍设计最佳实践"
+      },
+      {
+        "name": "Shopify Polaris",
+        "url": "https://polaris.shopify.com",
+        "use_for": "电商产品设计系统，B2B SaaS 设计参考"
+      }
+    ],
+    "css_framework_references": [
+      {
+        "name": "Tailwind UI",
+        "url": "https://tailwindui.com",
+        "use_for": "Tailwind CSS 预制组件，高质量付费模板参考"
+      },
+      {
+        "name": "Flowbite",
+        "url": "https://flowbite.com",
+        "use_for": "免费 Tailwind 组件库，可直接使用"
+      },
+      {
+        "name": "Shadcn/ui",
+        "url": "https://ui.shadcn.com",
+        "use_for": "可复制的 React + Tailwind 组件，现代设计风格"
+      },
+      {
+        "name": "daisyUI",
+        "url": "https://daisyui.com",
+        "use_for": "Tailwind 组件类名，快速搭建界面"
+      }
+    ]
+  }
+}

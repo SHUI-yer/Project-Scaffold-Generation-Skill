@@ -156,9 +156,12 @@ Stage 1: 需求梳理 [Planner]
 Stage 2: 架构设计 [Architect]
   │  读取：requirements.json
   │  输出：architecture.json
+  │  **范围确认**：architecture.json 中必须明确标注 project_type 和生成范围
+  │  （backend-only 时 architecture.json 不含前端技术栈，frontend-only 时不含后端技术栈）
   │
 Stage 3: 代码生成 [Builder]
   │  读取：architecture.json + requirements.json
+  │  **范围约束**：Builder 必须按 project_type 只生成指定部分（见 builder.md 项目范围约束）
   │  输出：build-report.json + 代码文件
   │
 Stage 4: 质量检查 [QA]
@@ -261,14 +264,90 @@ Stage 6: 收尾
 | golden-amber | 琥珀金 | 金色系 | 酒店、旅游、高端服务 |
 | lime-fresh | 青柠绿 | 黄绿色系 | 年轻化产品、运动、社交 |
 
-### 风格选择规则
+### UI 设计参考优先级（强制执行）
+
+Agent 在设计 UI 时，**必须按以下优先级获取设计参考**，不得跳步：
+
+| 优先级 | 来源 | 操作 | 何时使用 |
+|--------|------|------|----------|
+| **P0（首选）** | **联网搜索开源 UI 库** | 使用 WebSearch 搜索同类型产品的开源 UI 实现 | **每次生成前端前必须先执行** |
+| **P1（次选）** | 本地知识库 | 读取 `ui-patterns-library.json` + `ui-style-library.json` | 联网搜索未找到合适参考时 |
+| **P2（兜底）** | 设计灵感网站 | 在 Dribbble/Mobbin 等网站搜索同类型设计 | 知识库也没有匹配方案时 |
+
+**P0 联网搜索规则（每次必执行）：**
+
+生成前端 UI 代码前，Agent 必须使用 `WebSearch` 工具搜索以下关键词（根据项目类型组合）：
+
+| 项目类型 | 搜索关键词模板 |
+|----------|---------------|
+| 管理后台 | `open source admin dashboard {framework} github`、`{framework} admin template modern UI` |
+| 电商 | `open source ecommerce frontend {framework} github`、`{framework} ecommerce UI dark theme` |
+| 社交 | `open source social media clone {framework} github`、`{framework} feed UI design` |
+| SaaS | `open source SaaS dashboard {framework} github`、`{framework} landing page template` |
+| 数据分析 | `open source analytics dashboard {framework} github`、`{framework} data visualization UI` |
+| 教育 | `open source LMS {framework} github`、`{framework} course platform UI` |
+| CMS | `open source CMS admin {framework} github`、`{framework} content management UI` |
+| 通用 | `modern {framework} UI components github`、`premium {framework} admin template` |
+
+**搜索后必须提取的信息**：
+- 该项目使用了什么颜色方案（从 README 或截图中提取）
+- 使用了什么组件库和布局模式
+- 有哪些值得借鉴的 UI 模式（如特殊的导航方式、卡片设计、表格交互）
+- 将搜索到的设计要点作为编码时的参考依据
+
+**P1 本地知识库（搜索无结果时）：**
+- `workflow/ui-style-library.json` — 11 种风格预设 + 8 种业务模板 + 9 种布局模式 + 12 种交互模式
+- `workflow/ui-patterns-library.json` — Google Material Design 3 / Apple HIG / X Twitter 完整设计规范
+- `workflow/ui-reference-sites.md` — 设计灵感网站清单
+
+### 风格选择规则（高级优先）
+
+**设计优先级策略（必须遵循）：**
+
+当推荐 UI 风格时，**必须优先推荐更高级、更有设计感的方案**，而非保守/基础方案：
+
+| 优先级 | 组件库/风格 | 适用场景 | 设计感 |
+|--------|------------|---------|--------|
+| P0（首选） | shadcn/ui + Tailwind | React 项目 | 极简高级感，完全可控 |
+| P0（首选） | Naive UI + 自定义主题 | Vue 3 项目 | 现代感，深色主题友好 |
+| P0（首选） | Arco Design + 自定义主题 | Vue 3/React | 字节跳动风格，精致 |
+| P1（次选） | MUI (Material UI) + 自定义主题 | React 项目 | Material Design 3，Google 品质感 |
+| P1（次选） | Ant Design + 深色主题 | Vue 3/React | 企业级全面，但默认偏保守 |
+| P2（备选） | Element Plus + 自定义主题 | Vue 3 管理后台 | 经典但需深度定制才高级 |
+
+**配色优先级策略：**
+
+| 优先级 | 配色方案 | 效果 |
+|--------|---------|------|
+| P0（首选） | midnight-dark / obsidian-black | 深色模式 — 普遍被认为更高级 |
+| P0（首选） | ocean-blue / emerald-teal | 品牌感强的彩色 — 现代产品气质 |
+| P1（次选） | golden-amber / royal-purple | 特色鲜明 — 差异化明显 |
+| P2（备选） | slate-corporate / arctic-white | 中性保守 — 只在用户明确要求时使用 |
+
+**高级 UI 附加要素（默认启用）：**
+
+- **渐变色**：按钮、导航栏、登录页背景使用渐变（如 `linear-gradient(135deg, #667eea, #764ba2)`）
+- **玻璃拟态（Glassmorphism）**：卡片/弹窗使用 `backdrop-filter: blur()` + 半透明背景
+- **微交互动画**：按钮 hover 效果、页面过渡动画、loading 骨架屏
+- **自定义字体**：优先使用 Google Fonts 中的高质量字体（如 Inter / Plus Jakarta Sans / Outfit），而非系统默认字体
+- **圆角风格**：使用 12-16px 的大圆角，避免 4px 小圆角（小圆角显得保守）
 
 **Stage 1（Planner）** 必须在 AskUserQuestion 中呈现风格选择：
 
 1. 从 `ui-style-library.json` 读取所有预设
-2. 以 AskUserQuestion 选项形式呈现（最多 4 个选项 + 推荐标记）
-3. 推荐逻辑：根据项目类型自动推荐最匹配的风格（参考 profiles 的 category 字段）
-4. 用户选定后，将 `style_profile` 写入 `requirements.json`
+2. **自动匹配推荐**：根据项目类型自动匹配业务模板，再根据业务模板和上述优先级表推荐风格预设和组件框架风格
+3. **推荐位（第一个选项）必须是高级方案**：推荐项 = 深色模式 + 高设计感组件库 + 渐变/玻璃拟态 + 自定义字体
+4. 以 AskUserQuestion 选项形式呈现（最多 4 个选项 + 推荐标记）
+5. 用户选定后，将 `style_profile` 写入 `requirements.json`
+6. **设计系统选择**：推荐 Google Material Design 3（最现代）或 Apple HIG（最高端感），而非通用/自定义
+
+**如果 Agent 对某个组件的设计不确定**（按优先级依次尝试）：
+1. **首先联网搜索**：使用 WebSearch 搜索 `{组件名} {框架} design example github` 或 `{业务类型} UI pattern`，找到真实开源项目的实现方式
+2. 然后查阅 `ui-patterns-library.json` 中对应设计系统的组件规范
+3. 再查阅 `ui-patterns-library.json` 中 `industry_patterns` 匹配业务场景的关键元素
+4. 最后在 `ui-reference-sites.md` 中的灵感网站搜索
+5. 不得凭空编造设计，必须有据可依
+6. **宁可做高级但也别出错，不要因为追求高级而引入无法运行的代码**
 
 ### 风格强制执行规则
 

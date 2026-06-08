@@ -17,7 +17,14 @@
 
 ## 行为约束
 
-- **Layer 1 必须先创建完整目录结构**（见 orchestrator.md 中的企业级目录规范）
+- **项目范围约束（防幻觉关键）**：生成代码前必须读取 requirements.json 的 `project_type` 字段，严格按范围生成：
+  - `fullstack` → 生成后端 + 前端 + 启动脚本
+  - `backend-only` → **只生成后端代码**，不创建 apps/frontend/ 目录，不生成前端相关文件，启动脚本只启动后端
+  - `frontend-only` → **只生成前端代码**，不创建 apps/backend/ 目录，不生成后端 Java 文件，启动脚本只启动前端（需用户自行对接后端 API）
+  - `cli` → 只生成命令行工具，不生成 Web 界面
+  - `library` → 只生成库代码 + 示例，不生成完整应用
+  - **禁止在 backend-only 时生成前端代码，禁止在 frontend-only 时生成后端代码**
+- **Layer 1 必须先创建完整目录结构**（见 orchestrator.md 中的企业级目录规范，但仅限 project_type 允许的目录）
 - 严格按 requirements.json 中选择的 build_order 顺序生成
 - 每个 Layer 生成后必须输出：文件清单 + 启动方式 + 验收点
 - 必须等用户确认当前 Layer 后才进入下一个 Layer（**使用 AskUserQuestion 以选项形式呈现确认，选项至少包含：继续 / 小改 / 重做**）
@@ -38,6 +45,26 @@
   - Python FastAPI：必须配置 HTTPException handler
   - Node.js Express：必须配置 JWT error handler
 - **构建完成后自动打包**：QA 通过后自动生成可分发 zip 到 `workspace/<project>.zip`，排除 `target/`、`node_modules/`、`.tools/`、`.idea/`、`_workflow/` 等非必要目录，zip 内包含完整项目（含启动脚本 + Maven Wrapper），对方解压后双击 start 即可运行
+- **UI 设计系统强制执行（前端项目必读）**：
+  1. 生成前端代码前，必须读取 `requirements.json` 的 `style_profile` 字段
+  2. **P0 必须先联网搜索**：使用 `WebSearch` 搜索 `open source {项目类型} {框架} github`，找到真实开源 UI 项目的颜色方案、布局模式、交互设计，提取设计要点作为编码参考
+  3. **P1 再查本地知识库**：从 `workflow/ui-style-library.json` 加载 tokens，从 `workflow/ui-patterns-library.json` 加载设计规范
+  4. 从 `premium_config.recommendation_priority` 读取当前风格所属的优先级等级（P0/P1/P2）
+  5. **CSS 变量 / 主题配置必须严格使用 tokens 中的值**，不得自行编造颜色或字体
+  6. 组件样式必须匹配 tokens 中的 `components` 配置
+  7. 布局参数必须匹配 `layout_patterns` 配置
+  8. 交互模式必须匹配 `interaction_patterns` 配置
+  9. **如果对某个组件的设计不确定**：首先使用 `WebSearch` 搜索 `{组件名} {框架} UI design github`，找到真实实现后再编码；未找到时再查阅本地知识库
+  10. **组件库风格适配**：根据 `component_framework_styles` 调整主题色、圆角、间距，使不同项目有明显视觉差异
+  11. **P0/P1 级别必须包含高级 UI 要素**（读取 `premium_config.must_include_when_premium`）：
+     - **渐变效果**：导航栏背景、主要按钮、登录页背景使用 `linear-gradient` 渐变
+     - **玻璃拟态**：弹窗/浮层使用 `backdrop-filter: blur(12px)` + 半透明背景色
+     - **自定义字体**：在 `index.html` 中引入 Google Fonts（Inter / Plus Jakarta Sans / Outfit），全局 `font-family` 使用
+     - **大圆角**：所有按钮/卡片/输入框使用 `border-radius: 10-16px`，禁止使用 4px 小圆角
+     - **微交互动画**：按钮 hover 有 `transform: scale(1.02)` 或颜色过渡，页面切换有淡入淡出
+     - **骨架屏**：列表页/详情页加载时显示骨架屏占位（CSS animation pulse）
+     - **阴影层次**：使用多层 `box-shadow`（sm + md + lg）营造深度感
+     - **深色模式**：默认深色主题，背景色使用 `#0f0f23` / `#121212` / `#1a1a2e`，文字使用浅色
 
 ## 首次运行强制清单（生成即跑，不许手动补救）
 
@@ -368,84 +395,307 @@
 - `@app.errorhandler(404)` 等必须存在
 - 返回统一 JSON 格式
 
-#### Svelte / SvelteKit
+#### Svelte / SvelteKit — 完整强制清单
+
+**项目结构（SvelteKit 必须按此组织）：**
+```
+src/
+├── lib/
+│   ├── api/                # API 请求层
+│   │   ├── client.ts       # Fetch 封装 + 拦截器
+│   │   └── <module>.ts
+│   ├── components/         # 可复用组件
+│   │   └── PageHeader.svelte
+│   ├── stores/             # Svelte Stores
+│   │   └── user.ts
+│   ├── types/              # TypeScript 类型
+│   │   └── api.d.ts
+│   └── utils/
+│       └── token.ts
+├── routes/                 # SvelteKit 文件路由
+│   ├── +layout.svelte      # 全局布局
+│   ├── +page.svelte        # 首页
+│   ├── login/
+│   │   └── +page.svelte    # 登录页
+│   ├── students/
+│   │   └── +page.svelte    # 学生管理
+│   └── +page.server.ts     # 服务端加载（如有）
+├── app.html
+└── app.css                 # 全局样式
+```
 
 **package.json：**
-- `scripts.dev` 必须存在（`vite dev`）
-- `scripts.build` 必须存在（`vite build`）
-- `scripts.preview` 必须存在（`vite preview`）
+- `scripts.dev` = `vite dev`，`scripts.build` = `vite build`，`scripts.preview` = `vite preview`
 - `dependencies` 必须包含：`svelte`
-- SvelteKit：`@sveltejs/kit`、`@sveltejs/adapter-auto` 必须存在
+- SvelteKit：`@sveltejs/kit`、`@sveltejs/adapter-auto`（或 `adapter-node`）
+- UI 组件库：`@skeletonlabs/skeleton` 或 `flowbite-svelte`
+- HTTP 客户端：`axios` 或原生 `fetch`
+- `devDependencies` 必须包含：`typescript`、`vite`、`@sveltejs/vite-plugin-svelte`
 
-**svelte.config.js（SvelteKit）：**
+**svelte.config.js：**
 - `adapter-auto` 或 `adapter-node` 必须导入和配置
-- `kit.alias` 如有使用必须配置
+- `kit.alias` 推荐配置 `#` 指向 `src/lib`
 
-**vite.config.js：**
+**vite.config.ts：**
 - `svelte()` 插件必须存在
+- `server.proxy` 必须配置（前后端分离项目）
 
-**入口文件：**
-- Svelte：`new App({ target: document.getElementById('app') })` 必须存在
-- SvelteKit：`+layout.svelte` 和 `+page.svelte` 文件必须存在
+**API 层（lib/api/client.ts）— 必须包含：**
+- `fetch` 封装或 `axios` 实例，配置 baseURL 和 timeout
+- **请求拦截器**：自动设置 `Authorization: Bearer <token>`
+- **响应拦截器**：
+  - 成功时解包响应体
+  - 失败时弹出 toast 提示
+  - 401 时清除 Token 并 `goto('/login')`
 
-**路由（SvelteKit）：**
-- `src/routes/` 目录结构必须正确（`+page.svelte`、`+layout.svelte`）
-- `+page.server.js`（服务端加载）如有时，`load` 函数必须导出
+**路由（SvelteKit 文件路由）— 必须包含：**
+- `src/routes/` 目录结构：`+page.svelte`（页面）、`+layout.svelte`（布局）
+- **路由守卫**：在 `+layout.server.ts` 或 `+layout.ts` 中检查 Token
+  - 无 Token + 需要认证 → `redirect(302, '/login')`
+- `+page.server.ts`（如有）：`load` 函数必须正确导出数据
+
+**Svelte Stores（lib/stores/）— 必须包含：**
+- 使用 `writable()` 定义状态
+- Token 和用户信息持久化到 localStorage
+- 提供 `login()` 和 `logout()` 函数（包装 store update）
+
+**页面组件（routes/）— 每个 CRUD 页面必须包含：**
+- **表格**：`<table>` 或 UI 库 Table 组件，`{#await}` / `{#each}` 渲染
+- **分页**：自定义或库组件
+- **搜索**：`<input bind:value={keyword}>` + 搜索按钮
+- **新增/编辑弹窗**：`{#if showModal}` 条件渲染 + `<form>` 表单
+  - 表单验证（`bind:value` + 提交时校验）
+- **删除确认**：`window.confirm()` 或自定义确认组件
+- **加载状态**：`{#await}` / `$loading` store 控制
+- **空状态**：`{#if items.length === 0}` 显示提示
+
+**登录页 — 必须包含：**
+- 渐变/图片背景
+- 表单验证
+- Enter 键提交
+- 显示默认测试账号
+
+**布局页（+layout.svelte）— 必须包含：**
+- 侧边栏菜单
+- 顶部导航栏（用户名 + 退出）
+- `<slot />` 内容区
 
 **环境变量：**
-- SvelteKit：使用 `$env/static/private` 或 `$env/dynamic/private`
+- SvelteKit：使用 `$env/static/private` 或 `$env/dynamic/public`
+- 前缀 `PUBLIC_` 用于客户端可见变量
 - 不得硬编码 API 地址
 
-#### React（Vite + TypeScript）
+#### React（Vite + TypeScript）— 完整强制清单
+
+**项目结构（必须按此组织）：**
+```
+src/
+├── api/                    # API 请求层
+│   ├── request.ts          # Axios 实例 + 拦截器
+│   ├── auth.ts
+│   └── <module>.ts
+├── components/             # 可复用组件
+│   └── PageHeader.tsx
+├── hooks/                  # 自定义 Hooks
+│   └── usePagination.ts
+├── pages/                  # 页面组件
+│   ├── Login.tsx
+│   ├── Layout.tsx
+│   └── <module>.tsx
+├── router/
+│   └── index.tsx           # 路由配置
+├── stores/                 # 状态管理（Zustand/Redux）
+│   └── userStore.ts
+├── styles/
+│   └── global.css          # 全局样式
+├── types/                  # TypeScript 类型
+│   └── api.d.ts
+├── utils/
+│   └── token.ts
+├── App.tsx
+├── main.tsx
+└── vite-env.d.ts
+```
 
 **package.json：**
-- `scripts.dev` 必须存在（`vite`）
-- `scripts.build` 必须存在（`vite build`）
-- `dependencies` 必须包含：`react`、`react-dom`
-- 有路由时：`react-router-dom` 必须存在
-- 有状态管理时：`zustand` / `redux-toolkit` 必须存在
+- `scripts.dev` = `vite`，`scripts.build` = `vite build`
+- `dependencies` 必须包含：`react`、`react-dom`、`react-router-dom`
+- 状态管理（三选一）：`zustand` / `@reduxjs/toolkit` + `react-redux` / `jotai`
+- UI 组件库（三选一）：`antd` / `@mui/material` / `@arco-design/web-react`
+- HTTP 客户端：`axios`
+- 表单处理（推荐）：`react-hook-form` 或 `antd Form`
+- `devDependencies` 必须包含：`typescript`、`vite`、`@vitejs/plugin-react`、`@types/react`、`@types/react-dom`
 
 **vite.config.ts：**
 - `plugins: [react()]` 必须存在
-- 有代理时：`server.proxy` 必须配置（前后端同仓库时）
+- `server.proxy` 必须配置（前后端分离项目）
+- `resolve.alias` 推荐配置 `@` 指向 `src/`
 
-**入口文件（src/main.tsx）：**
-- `ReactDOM.createRoot` 必须存在
-- `<App />` 组件必须渲染
+**TypeScript 类型（types/）：**
+- 每个 API 模块必须有对应的响应类型定义
+- API 函数必须有参数和返回值类型（禁止 `any`）
+- 组件 Props 必须有类型定义
+
+**API 层（api/request.ts）— 必须包含：**
+- `axios.create()` 创建实例，配置 `baseURL` 和 `timeout`
+- **请求拦截器**：自动设置 `Authorization: Bearer <token>`
+- **响应拦截器**：
+  - 成功时统一解包，检查业务状态码
+  - 失败时调用 `message.error()`（antd）或 `toast.error()`（MUI）
+  - 401 时自动清除 Token 并跳转 `/login`
+
+**路由（router/index.tsx）— 必须包含：**
+- `<BrowserRouter>` 包裹 `<Routes>`
+- 每个路由 `element` 指向实际组件
+- **受保护路由**：封装 `<ProtectedRoute>` 组件检查 Token
+  - 有 Token → 渲染子路由
+  - 无 Token → `<Navigate to="/login" />`
+- 路由 meta 通过 layout 嵌套实现认证控制
+
+**状态管理 — 必须包含：**
+- Zustand 推荐：`create((set, get) => ({ ... }))` 模式
+- Token 和用户信息持久化到 localStorage
+- 提供 `login()` 和 `logout()` actions
+
+**页面组件 — 每个 CRUD 页面必须包含：**
+- **表格**：`<Table columns={columns} dataSource={data} loading={loading} />`
+- **分页**：表格内置 pagination 或 `<Pagination />`
+- **搜索**：`<Input.Search />` 或 `<Form>` 表单
+- **新增/编辑弹窗**：`<Modal>` + `<Form>` 表单
+  - 表单验证规则（`rules` 数组 + `name` 绑定）
+  - antd：`Form.useForm()` 获取表单实例
+- **删除确认**：`Modal.confirm()` 或 `<Popconfirm>`
+- **空状态**：`<Empty />` 组件
+- **错误处理**：API 调用用 `try/catch`，finally 中 `setLoading(false)`
+
+**登录页（Login.tsx）— 必须包含：**
+- 渐变/图片背景
+- 表单验证（用户名/密码必填）
+- Enter 键提交
+- 登录成功跳转，失败显示错误
+- 显示默认测试账号
+
+**布局页（Layout.tsx）— 必须包含：**
+- 侧边栏菜单（antd `<Layout.Sider>` 或 MUI `<Drawer>`）
+- 顶部导航栏（用户名 + 退出）
+- `<Outlet />` 内容区（react-router v6）
+
+**样式方案（三选一，必须一致）：**
+- **CSS Modules**：`<div className={styles.container}>` + `.module.css`
+- **Ant Design**：antd 组件自带样式 + `ConfigProvider` 自定义主题
+- **Tailwind CSS**：`className="flex items-center gap-2"`
 
 **环境变量：**
-- 以 `VITE_` 前缀（否则构建后丢失）
-- API base URL 使用 `import.meta.env.VITE_API_BASE_URL`
+- 前缀 `VITE_`
+- `import.meta.env.VITE_API_BASE_URL`
 
-**路由（如有）：**
-- `<BrowserRouter>` 或 `<Routes>` 必须包裹 `<App />`
-- 每个路由的 `element` 必须指向实际组件
+#### Vue 3（Vite + TypeScript）— 完整强制清单
 
-**API 请求：**
-- 使用统一的 API 客户端（如 axios 实例）
-- base URL 从环境变量读取，不得硬编码 `localhost`
-
-#### Vue 3（Vite + TypeScript）
+**项目结构（必须按此组织）：**
+```
+src/
+├── api/                    # API 请求层
+│   ├── request.ts          # Axios 实例 + 拦截器
+│   ├── auth.ts             # 认证 API
+│   └── <module>.ts         # 各业务模块 API
+├── components/             # 可复用组件
+│   └── PageHeader.vue      # 页面头部等通用组件
+├── composables/            # 组合式函数（Hooks）
+│   └── usePagination.ts    # 分页逻辑复用
+├── router/
+│   └── index.ts            # 路由配置 + 导航守卫
+├── stores/                 # Pinia 状态管理
+│   └── user.ts
+├── styles/
+│   └── variables.css       # CSS 变量（主题色）
+├── types/                  # TypeScript 类型定义
+│   └── api.d.ts            # API 响应类型
+├── utils/                  # 工具函数
+│   └── token.ts            # Token 管理
+├── views/                  # 页面组件
+│   ├── Login.vue
+│   ├── Layout.vue
+│   └── <module>.vue
+├── App.vue
+├── main.ts
+└── env.d.ts                # 环境变量类型声明
+```
 
 **package.json：**
-- `scripts.dev` 必须存在（`vite`）
-- `scripts.build` 必须存在（`vite build`）
-- `dependencies` 必须包含：`vue`、`vue-router`
-- 有状态管理时：`pinia` 必须存在
+- `scripts.dev` = `vite`，`scripts.build` = `vite build`，`scripts.preview` = `vite preview`
+- `dependencies` 必须包含：`vue`、`vue-router`、`pinia`
+- UI 组件库（三选一）：`element-plus` / `ant-design-vue` / `naive-ui`
+- HTTP 客户端：`axios`
+- `devDependencies` 必须包含：`typescript`、`vite`、`@vitejs/plugin-vue`、`vue-tsc`
 
 **vite.config.ts：**
 - `plugins: [vue()]` 必须存在
+- `server.proxy` 必须配置（前后端分离项目，代理 `/api` 到后端地址）
+- `resolve.alias` 推荐配置 `@` 指向 `src/`
 
-**入口文件（src/main.ts）：**
-- `createApp(App).use(router).mount('#app')` 必须存在
+**TypeScript 类型（types/）：**
+- 每个 API 模块必须有对应的响应类型定义（如 `Student`、`Course`、`PageResult<T>`）
+- API 函数必须有参数和返回值类型（禁止 `any`）
+- Pinia store 的 state 必须有类型
 
-**路由（src/router/index.ts）：**
-- 路由配置数组必须存在
-- 每个路由的 `component` 必须指向实际 `.vue` 文件
+**API 层（api/request.ts）— 必须包含：**
+- `axios.create()` 创建实例，配置 `baseURL` 和 `timeout`
+- **请求拦截器**：自动从 localStorage 读取 Token 并设置 `Authorization: Bearer <token>`
+- **响应拦截器**：
+  - 成功时统一解包 `response.data`（检查 `code === 200`）
+  - 失败时弹出 `ElMessage.error()` / `message.error()`
+  - 401 时自动清除 Token 并跳转 `/login`
+- 所有业务 API 文件使用 `import request from './request'`
+
+**路由（router/index.ts）— 必须包含：**
+- 路由配置数组，每个路由的 `component` 必须指向实际 `.vue` 文件（`() => import('../views/Xxx.vue')`）
+- **全局前置守卫** `router.beforeEach`：
+  - 有 Token → 允许通过
+  - 无 Token + 需要认证的页面 → 跳转 `/login`
+  - 有 Token + 访问 `/login` → 跳转首页
+- 路由 meta 必须标注 `requiresAuth: true/false`
+
+**Pinia Store（stores/）— 必须包含：**
+- 使用 Composition API 风格（`defineStore('xxx', () => { ... })`）
+- state 使用 `ref()`，getters 使用 `computed()`，actions 使用普通函数
+- Token 和用户信息存 localStorage（刷新后保持登录）
+- 提供 `login()` 和 `logout()` 方法
+
+**页面组件（views/）— 每个 CRUD 页面必须包含：**
+- **表格**：`<el-table>` 绑定数据，`v-loading` 加载状态
+- **分页**：`<el-pagination>` 绑定 page/pageSize/total
+- **搜索**：输入框 + 搜索按钮（或 `@keyup.enter`）
+- **新增/编辑弹窗**：`<el-dialog>` + `<el-form>` 表单
+  - 表单验证规则（`rules` 对象 + `prop` 绑定）
+  - `ref` 获取表单实例，提交前 `validate()` 校验
+- **删除确认**：`<el-popconfirm>` 或 `ElMessageBox.confirm()`
+- **空状态**：表格无数据时显示 `<el-empty>` 或文字提示
+- **错误处理**：API 调用用 `try/catch`，finally 中 `loading = false`
+
+**登录页（Login.vue）— 必须包含：**
+- 渐变/图片背景（不是纯白页面）
+- 表单验证（用户名/密码必填）
+- Enter 键提交登录
+- 登录成功跳转首页，失败显示错误提示
+- 显示默认测试账号信息
+
+**布局页（Layout.vue）— 必须包含：**
+- 侧边栏菜单（可折叠）
+- 顶部导航栏（显示用户名 + 退出按钮）
+- `<router-view />` 内容区
+- 菜单项与路由对应
+
+**样式规范：**
+- 使用 CSS 变量定义主题色（`--primary-color`）
+- scoped 样式隔离（`<style scoped>`）
+- 全局样式在 `styles/` 目录下统一管理
+- 响应式断点：移动端适配（`@media (max-width: 768px)`）推荐但不要求
 
 **环境变量：**
-- 以 `VITE_` 前缀
-- API base URL 使用 `import.meta.env.VITE_API_BASE_URL`
+- 前缀必须为 `VITE_`（否则构建后丢失）
+- `.env` / `.env.development` / `.env.production` 分环境配置
+- API base URL 使用 `import.meta.env.VITE_API_BASE_URL`（推荐但不强制）
+- `env.d.ts` 声明环境变量类型
 
 #### Python Django
 

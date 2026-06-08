@@ -131,7 +131,30 @@ Stage 6: 收尾
 
 每种预设包含完整的 **颜色 token、字体方案、组件样式、布局参数**，Builder 严格按 token 生成 UI，QA 会检查一致性。
 
-详见 [workflow/ui-style-library.json](workflow/ui-style-library.json)。
+#### 高级 UI 优先策略
+
+Agent 推荐 UI 时**默认优先推荐高级方案**（深色模式 + 渐变效果 + 玻璃拟态 + 自定义字体），只有用户明确表示"简单就行"时才推荐保守方案。
+
+#### UI 参考优先级：联网搜索 > 本地知识库
+
+| 优先级 | 来源 | 说明 |
+|--------|------|------|
+| **P0 首选** | 联网搜索开源 UI 库 | 每次生成前端前，先 WebSearch 搜索同类型产品的开源 UI 实现 |
+| P1 次选 | 本地知识库 | ui-style-library.json + ui-patterns-library.json |
+| P2 兜底 | 设计灵感网站 | Dribbble / Mobbin / Godly 等 |
+
+#### 8 种业务模板 + 9 种布局模式 + 12 种交互模式
+
+Agent 根据项目类型自动匹配业务模板（管理后台/SaaS/电商/社交/教育/数据大屏/医疗/外卖），并选择对应的布局模式和交互模式。
+
+#### 大厂设计模式知识库
+
+内建 Google Material Design 3 / Apple HIG / X Twitter 完整设计规范（颜色系统、排版层级、组件模式、动效曲线），Agent 遇到设计不确定时可查阅。
+
+详见：
+- [workflow/ui-style-library.json](workflow/ui-style-library.json) — 风格预设 + 业务模板 + 布局 + 交互
+- [workflow/ui-patterns-library.json](workflow/ui-patterns-library.json) — 大厂设计模式知识库
+- [workflow/ui-reference-sites.md](workflow/ui-reference-sites.md) — Agent 设计参考网站清单
 
 ## 7 个精简版 Skill
 
@@ -181,7 +204,9 @@ Project-build-SKILL/
 │  │  ├─ quality-report.schema.json   <- QA 输出格式
 │  │  ├─ fix-report.schema.json       <- Specialist 输出格式
 │  │  └─ defense-report.schema.json   <- 答辩报告模板 schema
-│  ├─ ui-style-library.json           <- UI 风格预设库（11种差异化风格）
+│  ├─ ui-style-library.json           <- UI 风格预设库（11种 + 8业务模板 + 9布局 + 12交互）
+│  ├─ ui-patterns-library.json        <- 大厂设计模式知识库（Material 3 / Apple HIG / X）
+│  ├─ ui-reference-sites.md           <- Agent 设计参考网站清单
 │  └─ templates/                      <- 交付文档模板
 │     ├─ defense-report.md            <- 答辩准备报告模板（含15个常见问题）
 │     ├─ packaging-guide.md           <- 项目打包指南模板
@@ -360,23 +385,12 @@ FixRouter（修正时）  → runtime / security 问题优先处理
 
 ### UI 风格多样性
 
-每个项目从 **11 种风格预设** 中选择，确保项目间视觉有明显区别：
+每个项目从 **11 种风格预设** 中选择，确保项目间视觉有明显区别。Agent 默认推荐高级方案（深色模式 + 渐变 + 玻璃拟态），每次生成前端前先联网搜索同类型开源 UI 库作为设计参考。
 
-| 预设 | 名称 | 适用场景 |
-|------|------|---------|
-| aurora-blue | 极光蓝 | 管理系统、SaaS |
-| sunset-orange | 日落橙 | 教育、培训、社区 |
-| forest-green | 森林绿 | 医疗、环保、农业 |
-| royal-purple | 皇家紫 | 奢侈品、设计、创意 |
-| ocean-teal | 海洋青 | 金融、银行、保险 |
-| cherry-red | 樱桃红 | 餐饮、电商、娱乐 |
-| midnight-dark | 午夜黑 | 开发者工具、技术平台 |
-| blossom-pink | 樱花粉 | 女性社区、健康、社交 |
-| slate-corporate | 石墨灰 | 企业后台、ERP、OA |
-| golden-amber | 琥珀金 | 酒店、旅游、高端服务 |
-| lime-fresh | 青柠绿 | 年轻化产品、运动、社交 |
-
-详见 [workflow/ui-style-library.json](workflow/ui-style-library.json)。
+详见：
+- [workflow/ui-style-library.json](workflow/ui-style-library.json) — 风格预设 + 业务模板
+- [workflow/ui-patterns-library.json](workflow/ui-patterns-library.json) — 大厂设计模式知识库
+- [workflow/ui-reference-sites.md](workflow/ui-reference-sites.md) — 设计参考网站
 
 ### 交互规范
 
@@ -391,7 +405,9 @@ FixRouter（修正时）  → runtime / security 问题优先处理
 | 工作流调度器 | [workflow/orchestrator.md](workflow/orchestrator.md) | 完整阶段定义 + 企业级目录规范 |
 | 角色定义 | `workflow/roles/` 目录 | 6 个角色的详细行为约束 |
 | JSON Schema | `workflow/schema/` 目录 | 6 个状态文件的格式定义 |
-| 风格预设库 | [workflow/ui-style-library.json](workflow/ui-style-library.json) | 11 种差异化 UI 风格 |
+| 风格预设库 | [workflow/ui-style-library.json](workflow/ui-style-library.json) | 11 种风格 + 8 业务模板 + 9 布局 + 12 交互 |
+| 大厂设计模式 | [workflow/ui-patterns-library.json](workflow/ui-patterns-library.json) | Material 3 / Apple HIG / X Twitter 设计规范 |
+| 设计参考网站 | [workflow/ui-reference-sites.md](workflow/ui-reference-sites.md) | Dribbble / Mobbin 等灵感网站清单 |
 | 交付文档模板 | `workflow/templates/` 目录 | 答辩报告 / 打包指南 / 项目总结 |
 | 跨平台适配 | [docs/platform-bridge.md](docs/platform-bridge.md) | Trae / Claude Code / Codex 接入指南 |
 | Agent 指令 | [AGENTS.md](AGENTS.md) | Codex / 通用 Agent 的入口文件 |
